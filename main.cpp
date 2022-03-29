@@ -2,7 +2,7 @@
 
 int main(void)
 {
-    std::cout << "Git repository has been created" << std::endl;
-
+    std::cout << "Hello world!" << std::endl;
+    
     return 0;
 }
