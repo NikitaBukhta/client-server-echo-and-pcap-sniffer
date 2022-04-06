@@ -183,14 +183,19 @@ int InetPton(int family, const char* src, void* destination)
 
     if (res == 0)
     {
-        printf("int_pton failed: src doesn't contain a charapter"
+
+        std::string error("int_pton failed: src doesn't contain a charapter"
             " string representing a valid network address in the specified"
-            " address family");
+            " address family.");
+
+        throw PosixError(error.c_str());
     }
     else if (res == -1)
     {
-        perror("inet_pton");
-        exit(EXIT_FAILURE);    
+        std::string error("Accept error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());  
     }
 
     return res;

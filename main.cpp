@@ -11,9 +11,7 @@ int main(void)
     serverAddress.sin_port = htons(12345);
     try
     {
-        server = Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-        Bind(server, (sockaddr*)(&serverAddress), sizeof(serverAddress));
-        Listen(-1, 1);
+        InetPton(0, 0, &serverAddress);
     }
     catch(const std::exception& e)
     {
