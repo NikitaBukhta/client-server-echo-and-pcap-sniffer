@@ -69,3 +69,39 @@ int Bind(int socketFD, const struct sockaddr* address, socklen_t addressLength)
 
     return ret;
 }
+
+/* listen wrapping
+ *
+ * Description
+ * Creation of socket-based connections requires several operations.  
+ * First, a socket is created with socket(2).  Next, a willingness to 
+ * accept incoming connections and a queue limit for incoming connections 
+ * are specified with listen().  Finally, the connections are accepted with 
+ * accept(2).  The listen() call applies only to sockets of type SOCK_STREAM.
+ * 
+ * Args:
+ * socketFD - a socket that has been created with socket(), bound to an address 
+ *      with bind(2);
+ * backlog - parameter defines the maximum length for the queue of pending 
+ *      connections.  If a connection request arrives with the queue full, 
+ *      the client may receive an error with an indication of ECONNREFUSED.  
+ *      Alternatively, if the underlying protocol supports retransmission, 
+ *      the request may be ignored so that retries may succeed;
+ * 
+ * Return values:
+ * Upon successful completion, a value of 0 is returned.
+ * Otherwise throw PosixError with information about error.
+ */
+int Listen(int socketFD, int backlog)
+{
+    int ret = listen(socketFD, backlog);
+    if (ret == -1)
+    {
+        std::string error("Listen error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+
+    return ret;
+}

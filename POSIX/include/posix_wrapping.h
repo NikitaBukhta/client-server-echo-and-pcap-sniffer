@@ -11,4 +11,6 @@ int Socket(int domain, int type, int protocol);
 
 int Bind(int socketFD, const struct sockaddr* address, socklen_t addressLength);
 
+int Listen(int socketFD, int backlog);
+
 #endif // !POSIX_WRAPPING_H
