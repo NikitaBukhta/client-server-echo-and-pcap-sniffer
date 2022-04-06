@@ -105,3 +105,40 @@ int Listen(int socketFD, int backlog)
 
     return ret;
 }
+
+/* accept wrapping
+ *
+ * Description:
+ * accept() extracts the first connection request on the queue of pending 
+ * connections, creates a new socket with the same properties of socket, and 
+ * allocates a new file descriptor for the socket. If no pending connections 
+ * are present on the queue, and the socket is not marked as non-blocking, 
+ * accept() blocks the caller until a connection is present.  If the socket is 
+ * marked non-blocking and no pending connections are present on the queue, accept() 
+ * returns an error as described below. The accepted socket may not be used to 
+ * accept more connections.  The original socket socket, remains open.
+ * 
+ * Args:
+ * socketFD - a socket that has been created with socket(), bound to an address with 
+ *      bind(2), and is listening for connections after a listen(2);
+ * address - address you want to give to the socket;
+ * addressLength - sizeof(address);
+ * 
+ * Return values:
+ * If it succeeds, it returns a non-negative integer that is a descriptor for the 
+ *      accepted socket.
+ * Otherwise throw PosixError with information about error.
+ */
+int Accept(int socketFD, sockaddr* address, socklen_t* addressLength)
+{
+    int ret = accept(socketFD, address, addressLength);
+    if (ret == -1)
+    {
+        std::string error("Accept error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+
+    return ret;
+}

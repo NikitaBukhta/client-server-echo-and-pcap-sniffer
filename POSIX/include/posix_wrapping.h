@@ -13,4 +13,6 @@ int Bind(int socketFD, const struct sockaddr* address, socklen_t addressLength);
 
 int Listen(int socketFD, int backlog);
 
+int Accept(int socketFD, sockaddr* address, socklen_t* addressLength);
+
 #endif // !POSIX_WRAPPING_H
