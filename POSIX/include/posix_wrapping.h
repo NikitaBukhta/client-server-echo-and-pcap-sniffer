@@ -17,4 +17,6 @@ int Accept(int socketFD, sockaddr* address, socklen_t* addressLength);
 
 int InetPton(int family, const char* src, void* destination);
 
+int Connect(int socketFD, const sockaddr* address, socklen_t addressLength);
+
 #endif // !POSIX_WRAPPING_H

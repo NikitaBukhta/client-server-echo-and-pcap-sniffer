@@ -200,3 +200,36 @@ int InetPton(int family, const char* src, void* destination)
 
     return res;
 }
+
+/* connect wrapping 
+ *
+ * Descrition:
+ * The parameter socketFD is a socket.  If it is of type SOCK_DGRAM, 
+ * this call specifies the peer with which the socket is to be associated; 
+ * this address is that to which datagrams are to be sent, and the only 
+ * address from which datagrams are to be received.  If the socket is of 
+ * type SOCK_STREAM, this call attempts to make a connection to another socket.  
+ * The other socket is specified by address, which is an address in the communications 
+ * space of the socket.
+ * 
+ * Args:
+ * socketFD - socket;
+ * address - address you want to give to the socket;
+ * addressLength - sizeof(address);
+ * 
+ * Return values:
+ * Upon successful completion, a value of 0 is returned.
+ * Otherwise throw PosixError with information about error.
+ */
+int Connect(int socketFD, const sockaddr* address, socklen_t addressLength)
+{
+    int ret = connect(socketFD, address, addressLength);
+
+    if (ret == -1)
+    {
+        std::string error("Connect error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+}
