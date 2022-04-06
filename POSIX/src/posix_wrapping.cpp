@@ -142,3 +142,56 @@ int Accept(int socketFD, sockaddr* address, socklen_t* addressLength)
 
     return ret;
 }
+
+/* inet_pton wraping
+ *
+ * Description:
+ * The inet_pton() function converts a presentation format address (that is, 
+ * printable form as held in a character string) to network format (usually 
+ * a struct in_addr or some other internal binary representation, in network 
+ * byte order).  It returns 1 if the address was valid for the specified 
+ * address family, or 0 if the address was not parseable in the specified address 
+ * family, or -1 if some system error occurred (in which case errno will have been set).  
+ * This function is presently valid for AF_INET and AF_INET6.
+ * 
+ * family - The address family. The values currently supported are AF_INET and AF_INET6.
+ * src - A pointer to the NULL-terminated string that contains the text representation of 
+ *      the IP address to convert to numeric binary form.
+ *      When the Family parameter is AF_INET, then the src parameter must point 
+ *          to a text representation of an IPv4 address in standard dotted-decimal notation.
+ *      When the Family parameter is AF_INET6, then the src parameter must point to 
+ *          a text representation of an IPv6 address in standard notation.
+ * destination - A pointer to a buffer in which to store the numeric binary representation 
+ *      of the IP address. The IP address is returned in network byte order.
+ *      When the Family parameter is AF_INET, this buffer should be large enough to hold 
+ *          an IN_ADDR structure.
+ *      When the Family parameter is AF_INET6, this buffer should be large enough to hold 
+ *          an IN6_ADDR structure.
+ * 
+ * Return values:
+ * If no error occurs, the InetPton function returns a value of 1 and the buffer pointed 
+ *      to by the destination parameter contains the binary numeric IP address in network byte 
+ *      order.
+ * The InetPton function returns a value of 0 if the pAddrBuf parameter points to a string 
+ *      that is not a valid IPv4 dotted-decimal string or a valid IPv6 address string. 
+ * Otherwise, a value of -1 is returned, and a specific error code can be retrieved by calling 
+ *      the WSAGetLastError for extended error information.
+ */
+int InetPton(int family, const char* src, void* destination)
+{
+    int res = inet_pton(family, src, destination);
+
+    if (res == 0)
+    {
+        printf("int_pton failed: src doesn't contain a charapter"
+            " string representing a valid network address in the specified"
+            " address family");
+    }
+    else if (res == -1)
+    {
+        perror("inet_pton");
+        exit(EXIT_FAILURE);    
+    }
+
+    return res;
+}

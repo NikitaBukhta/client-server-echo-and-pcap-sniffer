@@ -15,4 +15,6 @@ int Listen(int socketFD, int backlog);
 
 int Accept(int socketFD, sockaddr* address, socklen_t* addressLength);
 
+int InetPton(int family, const char* src, void* destination);
+
 #endif // !POSIX_WRAPPING_H
