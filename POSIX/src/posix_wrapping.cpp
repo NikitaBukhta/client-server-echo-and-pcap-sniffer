@@ -1,8 +1,9 @@
 #include "posix_wrapping.h"
+#include "posixError.h"
 
 #include <sys/socket.h>     // socket()
-#include <stdio.h>          // perror()
-#include <stdlib.h>         // exit()
+#include <errno.h>
+#include <string>
 
 /* socket wrapping
  *
@@ -26,8 +27,10 @@ int Socket(int domain, int type, int protocol)
 
     if (ret == -1)
     {
-        perror("socket error: ");
-        exit(EXIT_FAILURE);
+        std::string error("Socket error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
     }
 
     return ret;

@@ -8,6 +8,7 @@ set(
 set(
     SRC
     src/posix_wrapping.cpp
+    src/posixError.cpp
 )
 
 add_library(
