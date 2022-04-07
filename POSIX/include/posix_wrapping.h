@@ -94,7 +94,7 @@ int Listen(int socketFD, int backlog);
  *      accepted socket.
  * Otherwise throw PosixError with information about error.
  */
-int Accept(int socketFD, sockaddr* address, socklen_t* addressLength);
+int Accept(int socketFD, struct sockaddr* address, socklen_t* addressLength);
 
 /* inet_pton wrapping
  *
@@ -152,7 +152,7 @@ int InetPton(int family, const char* src, void* destination);
  * Upon successful completion, a value of 0 is returned.
  * Otherwise throw PosixError with information about error.
  */
-int Connect(int socketFD, const sockaddr* address, socklen_t addressLength);
+int Connect(int socketFD, const struct sockaddr* address, socklen_t addressLength);
 
 /* setsockopt wraping
  *

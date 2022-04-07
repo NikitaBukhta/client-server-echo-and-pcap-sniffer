@@ -48,7 +48,7 @@ int Listen(int socketFD, int backlog)
     return ret;
 }
 
-int Accept(int socketFD, sockaddr* address, socklen_t* addressLength)
+int Accept(int socketFD, struct sockaddr* address, socklen_t* addressLength)
 {
     int ret = accept(socketFD, address, addressLength);
     if (ret == -1)
@@ -86,7 +86,7 @@ int InetPton(int family, const char* src, void* destination)
     return res;
 }
 
-int Connect(int socketFD, const sockaddr* address, socklen_t addressLength)
+int Connect(int socketFD, const struct sockaddr* address, socklen_t addressLength)
 {
     int ret = connect(socketFD, address, addressLength);
 
@@ -97,6 +97,8 @@ int Connect(int socketFD, const sockaddr* address, socklen_t addressLength)
         
         throw PosixError(error.c_str());
     }
+
+    return ret;
 }
 
 int Setsockopt(int socketFD, int level, int optionName, const void *optionValue, socklen_t optionLength)
