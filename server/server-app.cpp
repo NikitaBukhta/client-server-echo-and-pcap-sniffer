@@ -5,7 +5,9 @@
 
 int main(int argc, char **argv)
 {
-    std::cout << "Hello world!" << std::endl;
+    Server server(12345);
+
+    std::cout << "End of program!" << std::endl;
 
     return 0;
 }

@@ -176,6 +176,10 @@ int Connect(int socketFD, const struct sockaddr* address, socklen_t addressLengt
  * optionValue - A pointer to the buffer in which the value for the requested option 
  *      is specified;
  * optionLength - sizeof(optionValue);
+ * 
+ * Return values:
+ * Upon successful completion, a value of 0 is returned.
+ * Otherwise throw PosixError with information about error.
  */
 int Setsockopt(int socketFD, int level, int optionName, const void *optionValue, socklen_t optionLength);
 
