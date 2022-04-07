@@ -3,17 +3,20 @@
 
 #include <exception>
 
-class PosixError : public std::exception
+namespace POSIX
 {
-private:
-    char *errorMessage;
+    class PosixError : public std::exception
+    {
+    private:
+        char *errorMessage;
 
-public:
-    PosixError(const char *msg);
-    
-    ~PosixError(void);
+    public:
+        PosixError(const char *msg);
+        
+        ~PosixError(void);
 
-    virtual const char* what(void) const noexcept override;
+        virtual const char* what(void) const noexcept override;
+    };
 };
 
 #endif // !POSIX_ERROR_H

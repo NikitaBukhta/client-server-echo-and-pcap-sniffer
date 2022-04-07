@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <string>
 
-int Socket(int domain, int type, int protocol)
+int POSIX::Socket(int domain, int type, int protocol)
 {
     int ret = socket(domain, type, protocol);
 
@@ -20,7 +20,7 @@ int Socket(int domain, int type, int protocol)
     return ret;
 }
 
-int Bind(int socketFD, const struct sockaddr* address, socklen_t addressLength)
+int POSIX::Bind(int socketFD, const struct sockaddr* address, socklen_t addressLength)
 {
     int ret = bind(socketFD, address, addressLength);
     if (ret == -1)
@@ -34,7 +34,7 @@ int Bind(int socketFD, const struct sockaddr* address, socklen_t addressLength)
     return ret;
 }
 
-int Listen(int socketFD, int backlog)
+int POSIX::Listen(int socketFD, int backlog)
 {
     int ret = listen(socketFD, backlog);
     if (ret == -1)
@@ -48,7 +48,7 @@ int Listen(int socketFD, int backlog)
     return ret;
 }
 
-int Accept(int socketFD, struct sockaddr* address, socklen_t* addressLength)
+int POSIX::Accept(int socketFD, struct sockaddr* address, socklen_t* addressLength)
 {
     int ret = accept(socketFD, address, addressLength);
     if (ret == -1)
@@ -62,7 +62,7 @@ int Accept(int socketFD, struct sockaddr* address, socklen_t* addressLength)
     return ret;
 }
 
-int InetPton(int family, const char* src, void* destination)
+int POSIX::InetPton(int family, const char* src, void* destination)
 {
     int res = inet_pton(family, src, destination);
 
@@ -86,7 +86,7 @@ int InetPton(int family, const char* src, void* destination)
     return res;
 }
 
-int Connect(int socketFD, const struct sockaddr* address, socklen_t addressLength)
+int POSIX::Connect(int socketFD, const struct sockaddr* address, socklen_t addressLength)
 {
     int ret = connect(socketFD, address, addressLength);
 
@@ -101,7 +101,7 @@ int Connect(int socketFD, const struct sockaddr* address, socklen_t addressLengt
     return ret;
 }
 
-int Setsockopt(int socketFD, int level, int optionName, const void *optionValue, socklen_t optionLength)
+int POSIX::Setsockopt(int socketFD, int level, int optionName, const void *optionValue, socklen_t optionLength)
 {
     int ret = setsockopt(socketFD, level, optionName, optionValue, optionLength);
 

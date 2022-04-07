@@ -33,11 +33,11 @@ int Server::MakeServerSocket(void)
 {
     try
     {
-        serversSocket = Socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
-        Bind(serversSocket, (struct sockaddr*)(&address), sizeof(address));
-        Listen(serversSocket, maxClientsCount);
+        serversSocket = POSIX::Socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
+        POSIX::Bind(serversSocket, (struct sockaddr*)(&address), sizeof(address));
+        POSIX::Listen(serversSocket, maxClientsCount);
     }
-    catch(const PosixError& e)
+    catch(const POSIX::PosixError& e)
     {
         std::cerr << e.what() << std::endl;
         

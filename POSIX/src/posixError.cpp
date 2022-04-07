@@ -2,18 +2,18 @@
 
 #include <string.h>
 
-PosixError::PosixError(const char *msg)
+POSIX::PosixError::PosixError(const char *msg)
 {
     errorMessage = new char[strlen(msg)];
     strcpy(errorMessage, msg);
 }
 
-PosixError::~PosixError(void)
+POSIX::PosixError::~PosixError(void)
 {
     delete[] errorMessage;
 }
 
-const char* PosixError::what(void) const noexcept
+const char* POSIX::PosixError::what(void) const noexcept
 {
     return errorMessage;
 }
