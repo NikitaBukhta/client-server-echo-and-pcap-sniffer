@@ -102,7 +102,7 @@ char* cs::Server::getClientIP(int clientSocket)
     }
 }
 
-void cs::Server::readMessage(std::string& buffer, int clientSocket)
+void cs::Server::readMessage(char *buffer, int clientSocket)
 {
     const unsigned short bufferSize = 1024;
     char buf[bufferSize];      // place for writting off client's message;
@@ -119,10 +119,10 @@ void cs::Server::readMessage(std::string& buffer, int clientSocket)
         strcpy(buf, "");    // fill buffer with empty string, if error is happened;
     }
 
-    buffer.assign(buf, nread);
+    strcpy(buffer, buf);
 }
 
-void cs::Server::readMessage(std::string& buffer)
+void cs::Server::readMessage(char *buffer)
 {
     do
     {
@@ -131,16 +131,17 @@ void cs::Server::readMessage(std::string& buffer)
             readMessage(buffer, client.first);
 
             // if message was found, left the function;
-            if (buffer != "")
+            if (strcmp(buffer, "") != 0)
                 return;
         }
-    } while (buffer == "");
+    } while (strcmp(buffer, "") == 0);
 }
 
-void cs::Server::GetClientSockets(std::vector<int>& clientSockets)
+void cs::Server::getClientSockets(std::vector<int>& clientSockets)
 {
     for (auto& client : clients)
     {
         clientSockets.push_back(client.first);
     }
 }
+

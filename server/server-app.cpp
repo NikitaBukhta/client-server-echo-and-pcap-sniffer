@@ -18,13 +18,14 @@ int main(int argc, char **argv)
     server.acceptClientConnection();
 
     std::vector<int> clientSockets;
-    server.GetClientSockets(clientSockets);
+    server.getClientSockets(clientSockets);
 
     for (auto& socket : clientSockets)
         std::cout << "Socket: " << socket << std::endl;
 
 
-    std::string msg = "";
+    //std::string msg = "";
+    char msg[1024];
     server.readMessage(msg, clientSockets[0]);
     std::cout << "Read message: " << msg << std::endl;
 

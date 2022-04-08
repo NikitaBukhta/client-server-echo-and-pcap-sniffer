@@ -72,7 +72,7 @@ namespace cs    // client-server
          * if function has worked successfully, record a string with message
          * content. Otherwise, empty string ("");
          */
-        void readMessage(std::string& buffer, int clientSocket);
+        void readMessage(char *buffer, int clientSocket);
 
         /* NOT TESTED!!!
          *
@@ -81,7 +81,7 @@ namespace cs    // client-server
          * Function works until the server didn't receive the message;
          * Max message length you can read is 1024;
          */
-        void readMessage(std::string& buffer);
+        void readMessage(char *buffer);
 
         /* Description:
          * Write all clients' sockets to the vector;
@@ -89,7 +89,11 @@ namespace cs    // client-server
          * ARGS:
          * clientSockets - array, which contains clients' sockets;
          */
-        void GetClientSockets(std::vector<int>& clientSockets);
+        void getClientSockets(std::vector<int>& clientSockets);
+
+        void sendMessage(char *message, int clientSocket);
+
+        void sendMessage(char *message);
 
     private:
         /* Description:
