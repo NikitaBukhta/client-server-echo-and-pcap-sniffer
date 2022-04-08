@@ -95,6 +95,8 @@ namespace cs    // client-server
 
         void sendMessage(char *message);
 
+        void modifyMessage(char *message, char *prefix, bool modifyAtStart);
+
     private:
         /* Description:
         * make socket, bind and listen for our server;

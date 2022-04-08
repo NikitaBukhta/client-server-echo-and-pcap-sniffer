@@ -220,6 +220,24 @@ namespace POSIX
      * Otherwise throw PosixError with information about error;
      */
     ssize_t _read(int socketFD, void *buf, size_t nbyte);
+
+    /* write wrapping
+     *
+     * Description:
+     * write() attempts to write nbyte of data to the object referenced 
+     * by the socketFD fildes from the buffer pointed to by buf.
+     * 
+     * ARGS:
+     * socketFD - to which descriptor we send message;
+     * buf - buffer, where we write data to the socketFD;
+     * nbyte - max count of byte we can read;
+     * 
+     * Return values:
+     * Upon successful completion the number of bytes which were written
+     * is returned.
+     * Otherwise throw PosixError with information about error;
+     */
+    ssize_t _write(int socketFD, const void *buf, size_t nbyte);
 };
 
 #endif // !POSIX_WRAPPING_H

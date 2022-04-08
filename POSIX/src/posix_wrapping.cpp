@@ -149,3 +149,19 @@ ssize_t POSIX::_read(int socketFD, void *buf, size_t nbyte)
 
     return nread;
 }
+
+ssize_t POSIX::_write(int socketFD, const void *buf, size_t nbyte)
+{
+    ssize_t nwrite;
+    nwrite = write(socketFD, buf, nbyte);
+
+    if (nwrite == -1)
+    {
+        std::string error("write error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+
+    return nwrite;
+}

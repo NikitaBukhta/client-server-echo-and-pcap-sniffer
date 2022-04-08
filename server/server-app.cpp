@@ -25,11 +25,13 @@ int main(int argc, char **argv)
 
 
     //std::string msg = "";
-    char msg[1024];
+    char msg[10];
     server.readMessage(msg, clientSockets[0]);
     std::cout << "Read message: " << msg << std::endl;
 
-    
+    server.modifyMessage(msg, "server echo: ", true);
+    server.sendMessage(msg);
+    std::cout << msg << std::endl;
 
     return 0;
 }

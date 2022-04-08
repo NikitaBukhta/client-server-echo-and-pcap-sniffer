@@ -145,3 +145,46 @@ void cs::Server::getClientSockets(std::vector<int>& clientSockets)
     }
 }
 
+void cs::Server::sendMessage(char *message, int clientSocket)
+{
+    try
+    {
+        POSIX::_write(clientSocket, message, strlen(message));
+    }
+    catch(const POSIX::PosixError& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+}
+
+void cs::Server::sendMessage(char *message)
+{
+    for (auto client : clients)
+    {
+        try
+        {
+            POSIX::_write(client.first, message, strlen(message));
+        }
+        catch(const POSIX::PosixError& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+    }
+}
+
+void cs::Server::modifyMessage(char *message, char *prefix, bool modifyAtStart)
+{
+    if (modifyAtStart)
+    {
+        int bufSize = strlen(message) + strlen(prefix) + 1;
+        char buf[bufSize];
+        strcpy(buf, prefix);
+        strcat(buf, message);
+        buf[bufSize - 1] = '\0';
+        strcpy(message, buf);
+    }
+    else
+    {
+        strcat(message, prefix);
+    }
+}
