@@ -16,5 +16,7 @@ int main(int argc, char **argv)
     cs::Server server(port, 0);
     server.acceptClientConnection();
 
+    std::cout << "Read message: " << server.readMessage() << std::endl;
+
     return 0;
 }

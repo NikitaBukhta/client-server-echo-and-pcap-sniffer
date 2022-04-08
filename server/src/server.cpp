@@ -101,3 +101,40 @@ char* cs::Server::getClientIP(int clientSocket)
         return nullptr;
     }
 }
+
+char* cs::Server::readMessage(int clientSocket)
+{
+    char buf[256];      // place for writting off client's message;
+    ssize_t nread;      // count of chars read;
+    
+    try
+    {
+        nread = POSIX::_read(clientSocket, &buf, sizeof(buf) * sizeof(char));
+    }
+    catch(const POSIX::PosixError& e)
+    {
+        std::cerr << e.what() << std::endl;
+
+        return nullptr;
+    }
+    
+    return buf;
+}
+
+char* cs::Server::readMessage(void)
+{
+    char* buf = nullptr;
+
+    do
+    {
+        for (auto client : clients)
+        {
+            buf = readMessage(client.first);
+
+            if (buf != nullptr)
+                break;
+        }
+    } while (buf == nullptr);
+
+    return buf;
+}

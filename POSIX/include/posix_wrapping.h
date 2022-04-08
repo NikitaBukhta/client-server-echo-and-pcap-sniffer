@@ -202,6 +202,24 @@ namespace POSIX
      * Otherwise throw PosixError with information about error.
      */
     char* _inetNtoa(const struct in_addr& in);
+
+    /* read warpping
+     *
+     * Description:
+     * Attempts to read nbyte bytes of data from the object referenced by the 
+     * socketFD fildes into the buffer pointed to by buf.
+     * 
+     * ARGS:
+     * socketFD - from which descriptor we read message;
+     * buf - buffer, where we write data to the buffer;
+     * nbyte - max count of byte we can read;
+     * 
+     * Return values:
+     * If successful, the number of bytes actually read is returned.  Upon 
+     * reading end-of-file, 0 is returned;
+     * Otherwise throw PosixError with information about error;
+     */
+    ssize_t _read(int socketFD, void *buf, size_t nbyte);
 };
 
 #endif // !POSIX_WRAPPING_H

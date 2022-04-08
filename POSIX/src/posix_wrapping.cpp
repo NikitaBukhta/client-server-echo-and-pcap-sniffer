@@ -1,9 +1,10 @@
 #include "posix_wrapping.h"
 #include "posixError.h"
 
-#include <sys/socket.h>     // socket(), bind()
+#include <sys/socket.h>
 #include <errno.h>
 #include <string>
+#include <unistd.h>     
 
 int POSIX::_socket(int domain, int type, int protocol)
 {
@@ -131,4 +132,20 @@ char* POSIX::_inetNtoa(const struct in_addr& in)
     }
 
     return ret;
+}
+
+ssize_t POSIX::_read(int socketFD, void *buf, size_t nbyte)
+{
+    ssize_t nread;
+    nread = read(socketFD, buf, nbyte);
+
+    if (nread == -1)
+    {
+        std::string error("read error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+
+    return nread;
 }

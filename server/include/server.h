@@ -54,7 +54,20 @@ namespace cs    // client-server
          */
         char* getClientIP(int clientSocket);
 
-        
+        /* Description:
+         * Read message that client sent to the server. Max message length 
+         * you can read is 256;
+         *
+         * ARGS:
+         * clientSocket - from which socket you want to read message;
+         * 
+         * Return values:
+         * return buffer with message contains, if success.
+         * Otherwile return nullptr and output error message;
+         */
+        char* readMessage(int clientSocket);
+
+        char* readMessage(void);
 
     private:
         /* Description:
