@@ -29,7 +29,7 @@ namespace POSIX
     * The return value is a descriptor referencing the socket.
     * Otherwise throw PosixError with information about error.
     */
-    int Socket(int domain, int type, int protocol);
+    int _socket(int domain, int type, int protocol);
 
     /* bind wrapping
     *
@@ -47,7 +47,7 @@ namespace POSIX
     * Upon successful completion, a value of 0 is returned.
     * Otherwise throw PosixError with information about error.
     */
-    int Bind(int socketFD, const struct sockaddr* address, socklen_t addressLength);
+    int _bind(int socketFD, const struct sockaddr* address, socklen_t addressLength);
 
     /* listen wrapping
      *
@@ -71,7 +71,7 @@ namespace POSIX
      * Upon successful completion, a value of 0 is returned.
      * Otherwise throw PosixError with information about error.
      */
-    int Listen(int socketFD, int backlog);
+    int _listen(int socketFD, int backlog);
 
     /* accept wrapping
      *
@@ -96,7 +96,7 @@ namespace POSIX
      *      accepted socket.
      * Otherwise throw PosixError with information about error.
      */
-    int Accept(int socketFD, struct sockaddr* address, socklen_t* addressLength);
+    int _accept(int socketFD, struct sockaddr* address, socklen_t* addressLength);
 
     /* inet_pton wrapping
      *
@@ -132,7 +132,7 @@ namespace POSIX
      * Otherwise, a value of -1 is returned, and a specific error code can be retrieved by calling 
      *      the WSAGetLastError for extended error information.
      */
-    int InetPton(int family, const char *src, void* destination);
+    int _inetPton(int family, const char *src, void* destination);
 
     /* connect wrapping 
      *
@@ -154,7 +154,7 @@ namespace POSIX
      * Upon successful completion, a value of 0 is returned.
      * Otherwise throw PosixError with information about error.
      */
-    int Connect(int socketFD, const struct sockaddr * address, socklen_t addressLength);
+    int _connect(int socketFD, const struct sockaddr * address, socklen_t addressLength);
 
     /* setsockopt wraping
      *
@@ -183,7 +183,7 @@ namespace POSIX
      * Upon successful completion, a value of 0 is returned.
      * Otherwise throw PosixError with information about error.
      */
-    int Setsockopt(int socketFD, int level, int optionName, const void  *optionValue, socklen_t optionLength);
+    int _setsockopt(int socketFD, int level, int optionName, const void  *optionValue, socklen_t optionLength);
 
     /* inet_ntoa wrapping
      *
@@ -201,7 +201,7 @@ namespace POSIX
      * containing the text address in standard "." notation.
      * Otherwise throw PosixError with information about error.
      */
-    char* InetNtoa(const struct in_addr& in);
+    char* _inetNtoa(const struct in_addr& in);
 };
 
 #endif // !POSIX_WRAPPING_H

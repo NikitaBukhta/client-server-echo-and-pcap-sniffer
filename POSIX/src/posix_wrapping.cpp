@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <string>
 
-int POSIX::Socket(int domain, int type, int protocol)
+int POSIX::_socket(int domain, int type, int protocol)
 {
     int ret = socket(domain, type, protocol);
 
@@ -20,7 +20,7 @@ int POSIX::Socket(int domain, int type, int protocol)
     return ret;
 }
 
-int POSIX::Bind(int socketFD, const struct sockaddr* address, socklen_t addressLength)
+int POSIX::_bind(int socketFD, const struct sockaddr* address, socklen_t addressLength)
 {
     int ret = bind(socketFD, address, addressLength);
     if (ret == -1)
@@ -34,7 +34,7 @@ int POSIX::Bind(int socketFD, const struct sockaddr* address, socklen_t addressL
     return ret;
 }
 
-int POSIX::Listen(int socketFD, int backlog)
+int POSIX::_listen(int socketFD, int backlog)
 {
     int ret = listen(socketFD, backlog);
     if (ret == -1)
@@ -48,7 +48,7 @@ int POSIX::Listen(int socketFD, int backlog)
     return ret;
 }
 
-int POSIX::Accept(int socketFD, struct sockaddr* address, socklen_t* addressLength)
+int POSIX::_accept(int socketFD, struct sockaddr* address, socklen_t* addressLength)
 {
     int ret = accept(socketFD, address, addressLength);
     if (ret == -1)
@@ -62,7 +62,7 @@ int POSIX::Accept(int socketFD, struct sockaddr* address, socklen_t* addressLeng
     return ret;
 }
 
-int POSIX::InetPton(int family, const char* src, void* destination)
+int POSIX::_inetPton(int family, const char* src, void* destination)
 {
     int res = inet_pton(family, src, destination);
 
@@ -86,7 +86,7 @@ int POSIX::InetPton(int family, const char* src, void* destination)
     return res;
 }
 
-int POSIX::Connect(int socketFD, const struct sockaddr* address, socklen_t addressLength)
+int POSIX::_connect(int socketFD, const struct sockaddr* address, socklen_t addressLength)
 {
     int ret = connect(socketFD, address, addressLength);
 
@@ -101,7 +101,7 @@ int POSIX::Connect(int socketFD, const struct sockaddr* address, socklen_t addre
     return ret;
 }
 
-int POSIX::Setsockopt(int socketFD, int level, int optionName, const void *optionValue, socklen_t optionLength)
+int POSIX::_setsockopt(int socketFD, int level, int optionName, const void *optionValue, socklen_t optionLength)
 {
     int ret = setsockopt(socketFD, level, optionName, optionValue, optionLength);
 
@@ -116,7 +116,7 @@ int POSIX::Setsockopt(int socketFD, int level, int optionName, const void *optio
     return ret;
 }
 
-char* POSIX::InetNtoa(const struct in_addr& in)
+char* POSIX::_inetNtoa(const struct in_addr& in)
 {
     char *ret = inet_ntoa(in);
 

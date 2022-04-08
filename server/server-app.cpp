@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     int port = atoi(argv[1]);
 
     cs::Server server(port, 0);
-    server.AcceptClientConnection();
+    server.acceptClientConnection();
 
     return 0;
 }

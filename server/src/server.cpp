@@ -11,7 +11,7 @@ cs::Server::Server(int port, unsigned short maxClientsCount)
     address.sin_port = htons(port);
     this->maxClientsCount = maxClientsCount;
 
-    MakeServerSocket();
+    makeServerSocket();
 }
 
 cs::Server::Server(int port) : Server(port, 1)
@@ -30,13 +30,13 @@ cs::Server::~Server(void)
     close(serversSocket);
 }
 
-int cs::Server::MakeServerSocket(void)
+int cs::Server::makeServerSocket(void)
 {
     try
     {
-        serversSocket = POSIX::Socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
-        POSIX::Bind(serversSocket, (struct sockaddr*)(&address), sizeof(address));
-        POSIX::Listen(serversSocket, maxClientsCount);
+        serversSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
+        POSIX::_bind(serversSocket, (struct sockaddr*)(&address), sizeof(address));
+        POSIX::_listen(serversSocket, maxClientsCount);
     }
     catch(const POSIX::PosixError& e)
     {
@@ -48,7 +48,7 @@ int cs::Server::MakeServerSocket(void)
     return EXIT_SUCCESS;
 }
 
-void cs::Server::AcceptClientConnection(void)
+void cs::Server::acceptClientConnection(void)
 {
     sockaddr_in clientAddress = {0};
     clientAddress.sin_family = address.sin_family;
@@ -58,7 +58,7 @@ void cs::Server::AcceptClientConnection(void)
 
     try
     {
-        clientSocket = POSIX::Accept(serversSocket, (sockaddr*)(&clientAddress), 
+        clientSocket = POSIX::_accept(serversSocket, (sockaddr*)(&clientAddress), 
             &clientAddressLength);
         
         // if server is full, throw the error;
@@ -69,8 +69,8 @@ void cs::Server::AcceptClientConnection(void)
         }
 
         clients.emplace(clientSocket, clientAddress);
-        char *clientIP = GetClientIP(clientSocket);
-
+        char *clientIP = getClientIP(clientSocket);
+        
         std::cout << "Client (" << clientIP << ") connected to the server!" 
         << std::endl;
     }
@@ -87,13 +87,13 @@ void cs::Server::AcceptClientConnection(void)
     }
 }
 
-char* cs::Server::GetClientIP(int clientSocket)
+char* cs::Server::getClientIP(int clientSocket)
 {
     auto client = clients.find(clientSocket);  
     
     try
     {
-        return POSIX::InetNtoa(client->second.sin_addr);
+        return POSIX::_inetNtoa(client->second.sin_addr);
     }
     catch(const POSIX::PosixError& e)
     {

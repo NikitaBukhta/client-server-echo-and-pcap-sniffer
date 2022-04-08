@@ -17,6 +17,6 @@ namespace POSIX
 
         virtual const char* what(void) const noexcept override;
     };
-};
+}
 
 #endif // !POSIX_ERROR_H

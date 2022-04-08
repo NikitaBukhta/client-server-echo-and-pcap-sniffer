@@ -38,7 +38,7 @@ namespace cs    // client-server
         */
         ~Server(void);
         
-        void AcceptClientConnection(void);
+        void acceptClientConnection(void);
 
         /* Description: 
          * Return client IP address in dotted-decimal notation. The string is 
@@ -52,7 +52,7 @@ namespace cs    // client-server
          * If no errors happened, returns client IP-address.
          * Otherwise nullptr;
          */
-        char* GetClientIP(int clientSocket);
+        char* getClientIP(int clientSocket);
 
         
 
@@ -68,7 +68,7 @@ namespace cs    // client-server
         * Upon successful completion, a value of EXIT_SUCCESS (0) is returned;
         * Otherwise return EXIT_FAILURE (1);
         */
-        int MakeServerSocket(void);
+        int makeServerSocket(void);
     };
 }
 
