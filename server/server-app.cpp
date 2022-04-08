@@ -20,18 +20,11 @@ int main(int argc, char **argv)
     std::vector<int> clientSockets;
     server.getClientSockets(clientSockets);
 
-    for (auto& socket : clientSockets)
-        std::cout << "Socket: " << socket << std::endl;
-
-
-    //std::string msg = "";
-    char msg[10];
-    server.readMessage(msg, clientSockets[0]);
-    std::cout << "Read message: " << msg << std::endl;
-
-    server.modifyMessage(msg, "server echo: ", true);
-    server.sendMessage(msg);
-    std::cout << msg << std::endl;
+    char message[256];
+    server.readMessage(message);
+    char prefix[] = "Server echo: ";
+    server.modifyMessage(message, prefix, true);
+    server.sendMessage(message, clientSockets[0]);
 
     return 0;
 }

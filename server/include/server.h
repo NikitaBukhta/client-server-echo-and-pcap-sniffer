@@ -26,6 +26,7 @@ namespace cs    // client-server
         * port - the server port on which it is running;
         */
         Server(int port);
+
         /* Description:
         * set port for server and set a value of max queue 
         *      maxClientsCount for server;
@@ -35,6 +36,7 @@ namespace cs    // client-server
         * maxClientsCount - the max count of clients on server;
         */
         Server(int port, unsigned short maxClientsCount);
+
         /* Description:
         * close all clients connection and close the server;
         */
@@ -91,10 +93,40 @@ namespace cs    // client-server
          */
         void getClientSockets(std::vector<int>& clientSockets);
 
+        /* Description:
+         * Send message to the specific client by a socket;
+         * Output information with an error to the screen, if
+         * server cannot send message to the client;
+         *
+         * ARGS:
+         * message - message you want to send to the client;
+         * clientSocket - socket of the client you want to 
+         *      send the message;
+         */
         void sendMessage(char *message, int clientSocket);
 
+        /* Description:
+         * Send message to the all clients by a socket;
+         * Output information with an error to the screen, if
+         * server cannot send message to the client (output 
+         * socket number and error message. Does not stop the
+         * work);
+         *
+         * ARGS:
+         * message - message you want to send to the client;
+         */
         void sendMessage(char *message);
 
+        /* Description:
+         * add prefix to your message and the message start 
+         * or at the end;
+         *
+         * ARGS:
+         * message - message you want to modify;
+         * prefix - some string you want to merge with message;
+         * modifyAtStart - if true, add prefix in the message start.
+         *      Otherwise, modify message at the end;
+         */
         void modifyMessage(char *message, char *prefix, bool modifyAtStart);
 
     private:

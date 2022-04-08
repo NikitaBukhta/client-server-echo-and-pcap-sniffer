@@ -153,7 +153,7 @@ void cs::Server::sendMessage(char *message, int clientSocket)
     }
     catch(const POSIX::PosixError& e)
     {
-        std::cerr << e.what() << '\n';
+        std::cerr << e.what() << std::endl;
     }
 }
 
@@ -167,7 +167,8 @@ void cs::Server::sendMessage(char *message)
         }
         catch(const POSIX::PosixError& e)
         {
-            std::cerr << e.what() << '\n';
+            std::cerr << "Client socket " << client.first << ": " << e.what() 
+                << std::endl;
         }
     }
 }
