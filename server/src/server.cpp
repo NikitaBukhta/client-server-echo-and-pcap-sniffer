@@ -1,5 +1,6 @@
 #include "server.h"
 #include "posix_wrapping.h"
+#include "connectionError.h"
 
 #include <unistd.h>     // close();
 #include <iostream>     // std::cerr
@@ -53,21 +54,18 @@ void cs::Server::AcceptClientConnection(void)
     clientAddress.sin_family = address.sin_family;
     clientAddress.sin_port = address.sin_port;
     socklen_t clientAddressLength = sizeof(clientAddress);
+    int clientSocket;
 
     try
     {
-        int clientSocket = POSIX::Accept(serversSocket, (sockaddr*)(&clientAddress), 
+        clientSocket = POSIX::Accept(serversSocket, (sockaddr*)(&clientAddress), 
             &clientAddressLength);
         
-        // if server is full, output the error to this client;
+        // if server is full, throw the error;
         if (maxClientsCount <= clients.size())
         {
             char errorMessage[] = "Server is full. Try to connect letter!\n";
-            strcpy(errorMessage, "Server is full. Try to connect letter!\n");
-            write(clientSocket, errorMessage, strlen(errorMessage));
-            
-            close(clientSocket);
-            return;
+            throw cs::ConnectionError(errorMessage);
         }
 
         clients.emplace(clientSocket, clientAddress);
@@ -79,6 +77,13 @@ void cs::Server::AcceptClientConnection(void)
     catch(const POSIX::PosixError& e)
     {
         std::cerr << e.what() << std::endl;
+    }
+    catch(const cs::ConnectionError& e )
+    {
+        // send the error message and close connection with the client;
+        const char* errorMessage = e.what();
+        write(clientSocket, errorMessage, strlen(errorMessage));
+        close(clientSocket);
     }
 }
 

@@ -24,6 +24,7 @@ set(
 set(
     SRC
     src/server.cpp
+    src/connectionError.cpp
 )
 
 # libs we need for our lib;
