@@ -102,39 +102,45 @@ char* cs::Server::getClientIP(int clientSocket)
     }
 }
 
-char* cs::Server::readMessage(int clientSocket)
+void cs::Server::readMessage(std::string& buffer, int clientSocket)
 {
-    char buf[256];      // place for writting off client's message;
+    const unsigned short bufferSize = 1024;
+    char buf[bufferSize];      // place for writting off client's message;
     ssize_t nread;      // count of chars read;
     
     try
     {
-        nread = POSIX::_read(clientSocket, &buf, sizeof(buf) * sizeof(char));
+        nread = POSIX::_read(clientSocket, &buf, bufferSize);
     }
     catch(const POSIX::PosixError& e)
     {
         std::cerr << e.what() << std::endl;
 
-        return nullptr;
+        strcpy(buf, "");    // fill buffer with empty string, if error is happened;
     }
-    
-    return buf;
+
+    buffer.assign(buf, nread);
 }
 
-char* cs::Server::readMessage(void)
+void cs::Server::readMessage(std::string& buffer)
 {
-    char* buf = nullptr;
-
     do
     {
-        for (auto client : clients)
+        for (auto& client : clients)
         {
-            buf = readMessage(client.first);
+            readMessage(buffer, client.first);
 
-            if (buf != nullptr)
-                break;
+            // if message was found, left the function;
+            if (buffer != "")
+                return;
         }
-    } while (buf == nullptr);
+    } while (buffer == "");
+}
 
-    return buf;
+void cs::Server::GetClientSockets(std::vector<int>& clientSockets)
+{
+    for (auto& client : clients)
+    {
+        clientSockets.push_back(client.first);
+    }
 }

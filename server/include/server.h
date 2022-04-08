@@ -4,6 +4,8 @@
 #include "netinet/in.h"
 
 #include <map>
+#include <vector>
+#include <string>
 
 namespace cs    // client-server
 {
@@ -61,24 +63,33 @@ namespace cs    // client-server
 
         /* Description:
          * Read message that client sent to the server. Max message length 
-         * you can read is 256;
+         * you can read is 1024;
          *
          * ARGS:
          * clientSocket - from which socket you want to read message;
          * 
-         * Return values:
-         * return buffer with message contains, if success.
-         * Otherwile return nullptr and output error message;
+         * Value record:
+         * if function has worked successfully, record a string with message
+         * content. Otherwise, empty string ("");
          */
-        char* readMessage(int clientSocket);
+        void readMessage(std::string& buffer, int clientSocket);
 
         /* NOT TESTED!!!
          *
          * DESCRIPTION:
          * read the first message that was sent to the server.
-         * Function works until the server didn't receive the message.
+         * Function works until the server didn't receive the message;
+         * Max message length you can read is 1024;
          */
-        char* readMessage(void);
+        void readMessage(std::string& buffer);
+
+        /* Description:
+         * Write all clients' sockets to the vector;
+         *
+         * ARGS:
+         * clientSockets - array, which contains clients' sockets;
+         */
+        void GetClientSockets(std::vector<int>& clientSockets);
 
     private:
         /* Description:
