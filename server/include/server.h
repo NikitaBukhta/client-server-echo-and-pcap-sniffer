@@ -72,6 +72,12 @@ namespace cs    // client-server
          */
         char* readMessage(int clientSocket);
 
+        /* NOT TESTED!!!
+         *
+         * DESCRIPTION:
+         * read the first message that was sent to the server.
+         * Function works until the server didn't receive the message.
+         */
         char* readMessage(void);
 
     private:
