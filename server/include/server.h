@@ -38,6 +38,11 @@ namespace cs    // client-server
         */
         ~Server(void);
         
+        /* Description:
+         * make connection between new client and server. If server is not
+         * full, client added to clients list. Otherwise, server send message
+         * to new client with infomation about server overflow.
+         */
         void acceptClientConnection(void);
 
         /* Description: 
