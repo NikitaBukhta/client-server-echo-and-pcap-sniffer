@@ -4,7 +4,7 @@
 #include <unistd.h>     // close();
 #include <iostream>     // std::cerr
 
-Server::Server(int port, unsigned short maxClientsCount)
+cs::Server::Server(int port, unsigned short maxClientsCount)
 {
     address.sin_family = AF_INET;
     address.sin_port = htons(port);
@@ -13,11 +13,11 @@ Server::Server(int port, unsigned short maxClientsCount)
     MakeServerSocket();
 }
 
-Server::Server(int port) : Server(port, 1)
+cs::Server::Server(int port) : Server(port, 1)
 {
 }
 
-Server::~Server(void)
+cs::Server::~Server(void)
 {
     // close all clients;
     for (auto client : clients)
@@ -29,7 +29,7 @@ Server::~Server(void)
     close(serversSocket);
 }
 
-int Server::MakeServerSocket(void)
+int cs::Server::MakeServerSocket(void)
 {
     try
     {
@@ -45,4 +45,26 @@ int Server::MakeServerSocket(void)
     }
 
     return EXIT_SUCCESS;
+}
+
+void cs::Server::AcceptClientConnection(void)
+{
+    sockaddr_in clientAddress = {0};
+    clientAddress.sin_family = address.sin_family;
+    clientAddress.sin_port = address.sin_port;
+    socklen_t clientAddressLength = sizeof(clientAddress);
+
+    try
+    {
+        int clientSocket = POSIX::Accept(serversSocket, (sockaddr*)(&clientAddress), 
+            &clientAddressLength);
+        char *clientIP = POSIX::InetNtoa(clientAddress.sin_addr);
+
+        std::cout << "Client (" << clientIP << ") connected to the server!" 
+        << std::endl;
+    }
+    catch(const POSIX::PosixError& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
 }

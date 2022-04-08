@@ -132,7 +132,7 @@ namespace POSIX
      * Otherwise, a value of -1 is returned, and a specific error code can be retrieved by calling 
      *      the WSAGetLastError for extended error information.
      */
-    int InetPton(int family, const char * src, void* destination);
+    int InetPton(int family, const char *src, void* destination);
 
     /* connect wrapping 
      *
@@ -184,6 +184,24 @@ namespace POSIX
      * Otherwise throw PosixError with information about error.
      */
     int Setsockopt(int socketFD, int level, int optionName, const void  *optionValue, socklen_t optionLength);
+
+    /* inet_ntoa wrapping
+     *
+     * Desctiption:
+     * converts the Internet host address in, given in network byte order, to a string 
+     * in IPv4 dotted-decimal notation. The string is returned in a statically 
+     * allocated buffer, which subsequent calls will overwrite.
+     * 
+     * ARGS:
+     * in - IP address we want to convert;
+     * 
+     * Return values:
+     * 
+     * If no error occurs, inet_ntoa returns a character pointer to a static buffer 
+     * containing the text address in standard "." notation.
+     * Otherwise throw PosixError with information about error.
+     */
+    char* InetNtoa(const struct in_addr& in);
 };
 
 #endif // !POSIX_WRAPPING_H

@@ -115,3 +115,20 @@ int POSIX::Setsockopt(int socketFD, int level, int optionName, const void *optio
 
     return ret;
 }
+
+char* POSIX::InetNtoa(const struct in_addr& in)
+{
+    char *ret = inet_ntoa(in);
+
+    // I don't know, will this function throw error or not,
+    // but it returns NULL if some errors happened;
+    if (ret == NULL)
+    {
+        std::string error("inet_ntoa error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+
+    return ret;
+}
