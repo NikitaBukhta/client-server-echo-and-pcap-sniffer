@@ -40,6 +40,20 @@ namespace cs    // client-server
         
         void AcceptClientConnection(void);
 
+        /* Description: 
+         * Return client IP address in dotted-decimal notation. The string is 
+         * returned in a statically allocated buffer, which subsequent calls 
+         * will overwrite;
+         *
+         * ARGS:
+         * clientSocket - socket of client we want to get IP address;
+         * 
+         * Return values:
+         * If no errors happened, returns client IP-address.
+         * Otherwise nullptr;
+         */
+        char* GetClientIP(int clientSocket);
+
     private:
         /* Description:
         * make socket, bind and listen for our server;

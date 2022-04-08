@@ -58,7 +58,20 @@ void cs::Server::AcceptClientConnection(void)
     {
         int clientSocket = POSIX::Accept(serversSocket, (sockaddr*)(&clientAddress), 
             &clientAddressLength);
-        char *clientIP = POSIX::InetNtoa(clientAddress.sin_addr);
+        
+        // if server is full, output the error to this client;
+        if (maxClientsCount <= clients.size())
+        {
+            char errorMessage[] = "Server is full. Try to connect letter!\n";
+            strcpy(errorMessage, "Server is full. Try to connect letter!\n");
+            write(clientSocket, errorMessage, strlen(errorMessage));
+            
+            close(clientSocket);
+            return;
+        }
+
+        clients.emplace(clientSocket, clientAddress);
+        char *clientIP = GetClientIP(clientSocket);
 
         std::cout << "Client (" << clientIP << ") connected to the server!" 
         << std::endl;
@@ -66,5 +79,20 @@ void cs::Server::AcceptClientConnection(void)
     catch(const POSIX::PosixError& e)
     {
         std::cerr << e.what() << std::endl;
+    }
+}
+
+char* cs::Server::GetClientIP(int clientSocket)
+{
+    auto client = clients.find(clientSocket);  
+    
+    try
+    {
+        return POSIX::InetNtoa(client->second.sin_addr);
+    }
+    catch(const POSIX::PosixError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return nullptr;
     }
 }
