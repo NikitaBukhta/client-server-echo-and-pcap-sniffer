@@ -1,9 +1,6 @@
-#include "posixError.h"
 #include "server.h"
-#include "posix_wrapping.h"
 
 #include <iostream>
-#include <string.h>
 #include <vector>
 
 int main(int argc, char **argv)
