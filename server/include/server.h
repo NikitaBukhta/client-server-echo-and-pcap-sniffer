@@ -66,11 +66,15 @@ namespace cs    // client-server
          * you can read is 1024;
          *
          * ARGS:
+         * buffer - variable where we will save a read message;
          * clientSocket - from which socket you want to read message;
          * 
          * Value record:
          * if function has worked successfully, record a string with message
          * content. Otherwise, empty string ("");
+         * 
+         * return values:
+         * return size of readen message;
          */
         ssize_t readMessage(char *buffer, int clientSocket);
 
@@ -80,6 +84,17 @@ namespace cs    // client-server
          * read the first message that was sent to the server.
          * Function works until the server didn't receive the message;
          * Max message length you can read is 1024;
+         * 
+         * * ARGS:
+         * buffer - variable where we will save a read message;
+         * clientSocket - from which socket you want to read message;
+         * 
+         * Value record:
+         * if function has worked successfully, record a string with message
+         * content. Otherwise, empty string ("");
+         * 
+         * return values:
+         * return size of readen message;
          */
         ssize_t readMessage(char *buffer);
 

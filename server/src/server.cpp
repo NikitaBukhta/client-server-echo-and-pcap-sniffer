@@ -127,7 +127,7 @@ ssize_t cs::Server::readMessage(char *buffer, int clientSocket)
 
 ssize_t cs::Server::readMessage(char *buffer)
 {
-    ssize_t nread;
+    ssize_t nread = 0;
     do
     {
         for (auto& client : clients)
@@ -139,6 +139,8 @@ ssize_t cs::Server::readMessage(char *buffer)
                 return nread;
         }
     } while (strcmp(buffer, "") == 0);
+
+    return nread;
 }
 
 void cs::Server::getClientSockets(std::vector<int>& clientSockets)

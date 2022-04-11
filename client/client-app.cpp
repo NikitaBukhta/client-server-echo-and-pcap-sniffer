@@ -14,12 +14,17 @@ int main(int argc, char **argv)
     char* const IPv4 = argv[2];
 
     cs::Client client(port, argv[2]);
+    char buf[1024];     // place where contains messages from the server;
 
-    char buf[1024];
+    // read message about connection result;
     ssize_t nread = client.readMessage(buf);
     write(STDOUT_FILENO, buf, nread);
-    strcpy(buf, "Hello, server!");
-    client.sendMessage(buf);
+
+    //send message to the server;
+    char msg[] = "This is test message must be sent to the server";
+    client.sendMessage(msg);
+
+    // get feedback;
     nread = client.readMessage(buf);
     write(STDOUT_FILENO, buf, nread);
 
