@@ -71,8 +71,8 @@ void cs::Server::acceptClientConnection(void)
         clients.emplace(clientSocket, clientAddress);
         char *clientIP = getClientIP(clientSocket);
         
-        std::cout << "Client (" << clientIP << ") connected to the server!" 
-        << std::endl;
+        std::cout << "Client (" << clientIP << ") connected to the server!"; 
+        sendMessage("Connected\n", clientSocket);
     }
     catch(const POSIX::PosixError& e)
     {
@@ -82,7 +82,8 @@ void cs::Server::acceptClientConnection(void)
     {
         // send the error message and close connection with the client;
         const char* errorMessage = e.what();
-        write(clientSocket, errorMessage, strlen(errorMessage));
+        sendMessage(errorMessage, clientSocket);
+        //write(clientSocket, errorMessage, strlen(errorMessage));
         close(clientSocket);
     }
 }
@@ -102,7 +103,7 @@ char* cs::Server::getClientIP(int clientSocket)
     }
 }
 
-void cs::Server::readMessage(char *buffer, int clientSocket)
+ssize_t cs::Server::readMessage(char *buffer, int clientSocket)
 {
     const unsigned short bufferSize = 1024;
     char buf[bufferSize];      // place for writting off client's message;
@@ -120,19 +121,22 @@ void cs::Server::readMessage(char *buffer, int clientSocket)
     }
 
     strcpy(buffer, buf);
+
+    return nread;
 }
 
-void cs::Server::readMessage(char *buffer)
+ssize_t cs::Server::readMessage(char *buffer)
 {
+    ssize_t nread;
     do
     {
         for (auto& client : clients)
         {
-            readMessage(buffer, client.first);
+            nread = readMessage(buffer, client.first);
 
             // if message was found, left the function;
             if (strcmp(buffer, "") != 0)
-                return;
+                return nread;
         }
     } while (strcmp(buffer, "") == 0);
 }
@@ -145,7 +149,7 @@ void cs::Server::getClientSockets(std::vector<int>& clientSockets)
     }
 }
 
-void cs::Server::sendMessage(char *message, int clientSocket)
+void cs::Server::sendMessage(const char *message, int clientSocket)
 {
     try
     {
@@ -157,7 +161,7 @@ void cs::Server::sendMessage(char *message, int clientSocket)
     }
 }
 
-void cs::Server::sendMessage(char *message)
+void cs::Server::sendMessage(const char *message)
 {
     for (auto client : clients)
     {

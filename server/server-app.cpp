@@ -1,6 +1,6 @@
 #include "server.h"
 
-#include <iostream>
+#include <stdexcept>
 #include <vector>
 
 int main(int argc, char **argv)

@@ -72,7 +72,7 @@ namespace cs    // client-server
          * if function has worked successfully, record a string with message
          * content. Otherwise, empty string ("");
          */
-        void readMessage(char *buffer, int clientSocket);
+        ssize_t readMessage(char *buffer, int clientSocket);
 
         /* NOT TESTED!!!
          *
@@ -81,7 +81,7 @@ namespace cs    // client-server
          * Function works until the server didn't receive the message;
          * Max message length you can read is 1024;
          */
-        void readMessage(char *buffer);
+        ssize_t readMessage(char *buffer);
 
         /* Description:
          * Write all clients' sockets to the vector;
@@ -101,7 +101,7 @@ namespace cs    // client-server
          * clientSocket - socket of the client you want to 
          *      send the message;
          */
-        void sendMessage(char *message, int clientSocket);
+        void sendMessage(const char *message, int clientSocket);
 
         /* Description:
          * Send message to the all clients by a socket;
@@ -113,7 +113,7 @@ namespace cs    // client-server
          * ARGS:
          * message - message you want to send to the client;
          */
-        void sendMessage(char *message);
+        void sendMessage(const char *message);
 
         /* Description:
          * add prefix to your message and the message start 

@@ -17,7 +17,7 @@ namespace cs    // client-server
 
         ~Client(void);
 
-        void readMessage(char *buffer);
+        ssize_t readMessage(char *buffer);
 
         void sendMessage(char *message);
     };
