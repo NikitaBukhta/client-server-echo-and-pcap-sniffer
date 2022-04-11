@@ -1,9 +1,7 @@
 #include "client.h"
-#include "posix_wrapping.h"
 
 #include <stdexcept>
-#include <string.h>
-#include <unistd.h>
+#include <unistd.h>     // STDOUT_FINO
 
 int main(int argc, char **argv)
 {
