@@ -10,10 +10,10 @@ int main(int argc, char **argv)
     if (argc < 3)
         throw std::invalid_argument("You must pass the port number and then IP address when starting the server!");
 
-    int port = atoi(argv[1]);
-    char* const IPv4 = argv[2];
+    char* const IPv4 = argv[1];
+    int port = atoi(argv[2]);
 
-    cs::Client client(port, argv[2]);
+    cs::Client client(port, IPv4);
     char buf[1024];     // place where contains messages from the server;
 
     // read message about connection result;
