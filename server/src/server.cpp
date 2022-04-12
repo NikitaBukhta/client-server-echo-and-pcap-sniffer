@@ -4,6 +4,7 @@
 
 #include <unistd.h>     // close();
 #include <iostream>     // std::cerr
+#include <netinet/tcp.h>
 
 cs::Server::Server(int port, unsigned short maxClientsCount)
 {
@@ -86,6 +87,9 @@ void cs::Server::acceptClientConnection(void)
         //write(clientSocket, errorMessage, strlen(errorMessage));
         close(clientSocket);
     }
+
+    // 10 - check keepalive every 10 seconds;
+    enableKeepalive(clientSocket, 10);
 }
 
 char* cs::Server::getClientIP(int clientSocket)
@@ -193,5 +197,21 @@ void cs::Server::modifyMessage(char *message, char *prefix, bool modifyAtStart)
     else
     {
         strcat(message, prefix);
+    }
+}
+
+void cs::Server::enableKeepalive(int clientSocket, int interval)
+{
+    int keepaliveOpt = true;
+    try
+    {
+        // turn on keepalive;
+        POSIX::_setsockopt(clientSocket, SOL_SOCKET, SO_KEEPALIVE, &keepaliveOpt, sizeof(keepaliveOpt));
+        // set interval between checking;
+        POSIX::_setsockopt(clientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
     }
 }

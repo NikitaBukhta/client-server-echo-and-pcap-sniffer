@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     server.getClientSockets(clientSockets);
 
     char message[256];
-    server.readMessage(message);
+    server.readMessage(message, clientSockets[0]);
     char prefix[] = "Server echo: ";
     server.modifyMessage(message, prefix, true);
     server.sendMessage(message, clientSockets[0]);

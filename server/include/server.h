@@ -155,6 +155,15 @@ namespace cs    // client-server
         * Otherwise return EXIT_FAILURE (1);
         */
         int makeServerSocket(void);
+
+        /* Description:
+         * Enable keep alive checking connection between client and server;
+         * 
+         * ARGS:
+         * clientSocket - socket we want to make keepalive checking;
+         * interval - interval between checking alive connection in seconds;
+         */
+        void enableKeepalive(int clientSocket, int interval);
     };
 }
 
