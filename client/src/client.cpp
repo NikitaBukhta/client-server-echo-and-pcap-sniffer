@@ -4,6 +4,7 @@
 #include <iostream>         // std::cerr
 #include <sys/socket.h>     // struct sockaddr
 #include <unistd.h>         // close()
+#include <sys/fcntl.h>
 
 cs::Client::Client(int port, char *IPv4)
 {
@@ -16,6 +17,7 @@ cs::Client::Client(int port, char *IPv4)
         POSIX::_inetPton(address.sin_family, IPv4, &address.sin_addr);
         
         serverSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
+        //fcntl(serverSocket, F_SETFL, O_NONBLOCK); // temp
         POSIX::_connect(serverSocket, (struct sockaddr*)(&address), sizeof(address));
     }
     catch(const POSIX::PosixError& e)

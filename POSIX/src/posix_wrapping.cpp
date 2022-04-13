@@ -165,3 +165,18 @@ ssize_t POSIX::_write(int socketFD, const void *buf, size_t nbyte)
 
     return nwrite;
 }
+
+bool POSIX::_select(int socketFD, fd_set *readfds, fd_set *writefds, fd_set *errorfds, struct timeval *timeout)
+{
+    int ret = select(socketFD, readfds, writefds, errorfds, timeout);
+
+    if (ret == -1)
+    {
+        std::string error("select error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+
+    return ret;
+}

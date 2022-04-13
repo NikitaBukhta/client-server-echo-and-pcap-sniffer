@@ -5,6 +5,7 @@
 #include <unistd.h>     // close();
 #include <iostream>     // std::cerr
 #include <netinet/tcp.h>
+#include <fcntl.h>      // temp
 
 cs::Server::Server(int port, unsigned short maxClientsCount)
 {
@@ -28,16 +29,17 @@ cs::Server::~Server(void)
     }
     
     // close server;
-    close(serversSocket);
+    close(serverSocket);
 }
 
 int cs::Server::makeServerSocket(void)
 {
     try
     {
-        serversSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
-        POSIX::_bind(serversSocket, (struct sockaddr*)(&address), sizeof(address));
-        POSIX::_listen(serversSocket, maxClientsCount);
+        serverSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
+        fcntl(serverSocket, F_SETFL, O_NONBLOCK); // temp
+        POSIX::_bind(serverSocket, (struct sockaddr*)(&address), sizeof(address));
+        POSIX::_listen(serverSocket, maxClientsCount);
     }
     catch(const POSIX::PosixError& e)
     {
@@ -49,7 +51,7 @@ int cs::Server::makeServerSocket(void)
     return EXIT_SUCCESS;
 }
 
-void cs::Server::acceptClientConnection(void)
+bool cs::Server::acceptClientConnection(void)
 {
     sockaddr_in clientAddress = {0};
     clientAddress.sin_family = address.sin_family;
@@ -59,7 +61,7 @@ void cs::Server::acceptClientConnection(void)
 
     try
     {
-        clientSocket = POSIX::_accept(serversSocket, (sockaddr*)(&clientAddress), 
+        clientSocket = POSIX::_accept(serverSocket, (sockaddr*)(&clientAddress), 
             &clientAddressLength);
         
         // if server is full, throw the error;
@@ -70,14 +72,13 @@ void cs::Server::acceptClientConnection(void)
         }
 
         clients.emplace(clientSocket, clientAddress);
-        char *clientIP = getClientIP(clientSocket);
-        
-        std::cout << "Client (" << clientIP << ") connected to the server!"; 
         sendMessage("Connected\n", clientSocket);
     }
     catch(const POSIX::PosixError& e)
     {
-        std::cerr << e.what() << std::endl;
+        //std::cerr << e.what() << std::endl;
+
+        return false;
     }
     catch(const cs::ConnectionError& e )
     {
@@ -86,10 +87,16 @@ void cs::Server::acceptClientConnection(void)
         sendMessage(errorMessage, clientSocket);
         //write(clientSocket, errorMessage, strlen(errorMessage));
         close(clientSocket);
-    }
 
-    // 10 - check keepalive every 10 seconds;
-    enableKeepalive(clientSocket, 10);
+        return false;
+    }
+    
+    char info[64];
+    sprintf(info, "Client %d (%s) connected to the server\n", clientSocket, getClientIP(clientSocket));
+    POSIX::_write(STDOUT_FILENO, info, strlen(info));
+    //enableKeepalive(clientSocket, 10);
+
+    return true;
 }
 
 char* cs::Server::getClientIP(int clientSocket)
@@ -119,7 +126,7 @@ ssize_t cs::Server::readMessage(char *buffer, int clientSocket)
     }
     catch(const POSIX::PosixError& e)
     {
-        std::cerr << e.what() << std::endl;
+        //std::cerr << e.what() << std::endl;
 
         strcpy(buf, "");    // fill buffer with empty string, if error is happened;
     }
@@ -183,7 +190,7 @@ void cs::Server::sendMessage(const char *message)
     }
 }
 
-void cs::Server::modifyMessage(char *message, char *prefix, bool modifyAtStart)
+void cs::Server::modifyMessage(char *message, const char *prefix, bool modifyAtStart)
 {
     if (modifyAtStart)
     {
@@ -214,4 +221,26 @@ void cs::Server::enableKeepalive(int clientSocket, int interval)
     {
         std::cerr << e.what() << '\n';
     }
+}
+
+int cs::Server::getServerSocket(void)
+{
+    return serverSocket;
+}
+
+void cs::Server::disconnectClient(int clientSocket)
+{
+    /*
+    char infomsg[32];
+    sprintf(infomsg, "Disconnect socket: {%d} {%s}\n", clientSocket, getClientIP(clientSocket));
+    POSIX::_write(STDERR_FILENO, infomsg, strlen(infomsg));
+    write(STDOUT_FILENO, "1\n", 3);
+    clients.erase(clients.begin(), clients.find(clientSocket));
+    write(STDOUT_FILENO, "2\n", 3);
+    close(clientSocket);
+    //write(STDOUT_FILENO, "done\n", 6);
+    */
+
+   clients.erase(clientSocket);
+   close(clientSocket);
 }

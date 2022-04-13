@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 #include <unistd.h>     // STDOUT_FINO
+#include <string.h>
+#include <iostream>
 
 int main(int argc, char **argv)
 {
@@ -18,10 +20,10 @@ int main(int argc, char **argv)
     ssize_t nread = client.readMessage(buf);
     write(STDOUT_FILENO, buf, nread);
 
+    char msg[1024];
     //send message to the server;
-    char msg[] = "This is test message must be sent to the server";
+    std::cin >> msg;
     client.sendMessage(msg);
-
     // get feedback;
     nread = client.readMessage(buf);
     write(STDOUT_FILENO, buf, nread);

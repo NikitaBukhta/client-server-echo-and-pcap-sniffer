@@ -11,7 +11,7 @@ namespace cs    // client-server
     {
     private:
         struct sockaddr_in address = {0};
-        int serversSocket;
+        int serverSocket;
         unsigned short maxClientsCount;
         std::map<int, struct sockaddr_in> clients;
 
@@ -27,7 +27,8 @@ namespace cs    // client-server
 
         /* Description:
         * set port for server and set a value of max queue 
-        *      maxClientsCount for server;
+        *       maxClientsCount for server;
+        *       set waiting for client feedback 10 seconds;
         * 
         * ARGS:
         * port - the server port on which it is running;
@@ -44,8 +45,11 @@ namespace cs    // client-server
          * make connection between new client and server. If server is not
          * full, client added to clients list. Otherwise, server send message
          * to new client with infomation about server overflow.
+         * 
+         * Return values:
+         * return true if connection was made;
          */
-        void acceptClientConnection(void);
+        bool acceptClientConnection(void);
 
         /* Description: 
          * Return client IP address in dotted-decimal notation. The string is 
@@ -140,7 +144,12 @@ namespace cs    // client-server
          * modifyAtStart - if true, add prefix in the message start.
          *      Otherwise, modify message at the end;
          */
-        void modifyMessage(char *message, char *prefix, bool modifyAtStart);
+        void modifyMessage(char *message, const char *prefix, bool modifyAtStart);
+
+        // return server socket;
+        int getServerSocket(void);
+
+        void disconnectClient(int clientSocket);
 
     private:
         /* Description:

@@ -238,6 +238,26 @@ namespace POSIX
      * Otherwise throw PosixError with information about error;
      */
     ssize_t _write(int socketFD, const void *buf, size_t nbyte);
+
+    /* Description:
+     * select() examines the I/O descriptor sets whose addresses are 
+     * passed in readfds, writefds, and errorfds to see if some of 
+     * their descriptors are ready for reading, are ready for writing, 
+     * or have an exceptional condition pending, respectively.  The 
+     * first nfds descriptors are checked in each set; i.e., the 
+     * descriptors from 0 through nfds-1 in the descriptor sets are 
+     * examined.  (Example: If you have set two file descriptors "4" and 
+     * "17", nfds should  not be "2", but rather "17 + 1" or "18".)  On 
+     * return, select() replaces the given descriptor sets with subsets 
+     * consisting of those descriptors that are ready for the requested 
+     * operation.  select() returns the total number of ready descriptors 
+     * in all the sets.
+     *
+     * ARGS:
+     * socketFD - socket we check;
+     * readfds
+     */
+    bool _select(int socketFD, fd_set *readfds, fd_set *writefds, fd_set *errorfds, struct timeval *timeout);
 };
 
 #endif // !POSIX_WRAPPING_H
