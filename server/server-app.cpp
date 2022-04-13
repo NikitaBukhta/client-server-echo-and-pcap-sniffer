@@ -3,11 +3,23 @@
 
 #include <stdexcept>
 #include <vector>
-#include <sys/select.h>     // temp;
-#include <unistd.h>
-#include <algorithm>        // std::remove;
-#include <string>
+#include <unistd.h>         // STDOUT_FILENO
+#include <algorithm>        // std::find;
 
+/* Description:
+ * Desconnect the client from the server and rewrite content from
+ * vector (remove disconnected client);
+ * 
+ * ARGS:
+ * client - client socket;
+ * server - server where we remove the client;
+ * clientList - vector with client sockets;
+ */
+void makeDisconnect(int client, cs::Server& server, std::vector<int>& clientList)
+{
+    server.disconnectClient(client);
+    clientList.erase(std::find(clientList.begin(), clientList.end(), client));
+}
 
 int main(int argc, char **argv)
 {
@@ -19,18 +31,16 @@ int main(int argc, char **argv)
 
     cs::Server server(port, 10);
     std::vector<int> clients;
-    bool connectionMade = false;
+    bool connectionMade = false;    /* this var is need in order to 
+                                     * do not close the server, if
+                                     * any connections have't made
+                                     * earlier;
+                                     */
     char msg[1024];
     char prefix[] = "Server echo: ";
-    int serverSocket = server.getServerSocket();
 
-    fd_set read_fds;
-    //FD_ZERO(&read_fds);
-    //FD_ZERO(&write_fds);
-    //FD_ZERO(&except_fds);
-    //FD_SET(serverSocket, &read_fds);
-
-    struct timeval timeout = {0};
+    fd_set read_fds;                // read fields for check an client performance;
+    struct timeval timeout = {0};   // checking interval;
     
     while (true)
     {   
@@ -44,48 +54,42 @@ int main(int argc, char **argv)
         // check every client
         for (auto& client : clients)
         {
+            // reinitialized the variables;
             FD_ZERO(&read_fds);
             FD_SET(client, &read_fds);
             timeout.tv_sec = 1;
             timeout.tv_usec = 0;
 
-            //printf("waiting for a message...\n");
-            if(select(client + 1, &read_fds, NULL, NULL, &timeout))
+            try
             {
-                std::string currentClient = "client " + std::to_string(client) + " (" + server.getClientIP(client) + ")";
-                std::string buf = "waiting for answer from " + currentClient + "\n";
-                write(STDOUT_FILENO, buf.c_str(), buf.size());
-                //printf("waiting for answer from client %d (%s)", client, server.getClientIP(client));
-                if (server.readMessage(msg))
+                // check if client can send message;
+                if(POSIX::_select(client + 1, &read_fds, NULL, NULL, &timeout))
                 {
-                    server.modifyMessage(msg, "\n", false);
-                    write(STDOUT_FILENO, msg, strlen(msg));
-                    server.modifyMessage(msg, "Server echo: ", true);
-                    server.sendMessage(msg, client);
+                    // if nothing is read, return 0;
+                    if (server.readMessage(msg, client))
+                    {
+                        server.modifyMessage(msg, "\n", false);
+                        POSIX::_write(STDOUT_FILENO, msg, strlen(msg));
+                        server.modifyMessage(msg, "Server echo: ", true);
+                        server.sendMessage(msg, client);
 
-                    /*
-                    server.disconnectClient(client);
-                    clients.clear();
-                    server.getClientSockets(clients);
-                    */
+                        strcpy(msg, "");    // clear msg data;
+                    }
+                    // if connection is lost, make disconnect the client from the server;
+                    else
+                        makeDisconnect(client, server, clients);
                 }
-                else
-                {
-                    server.disconnectClient(client);
-                    clients.clear();
-                    server.getClientSockets(clients);
-                    //std::remove(clients.begin(), clients.end(), client);
-                }
-
-                //FD_CLR(client, &read_fds);
-            } 
-            strcpy(msg, "");    // clear msg data;
+            }
+            // the same, if we cannot select the socket;
+            catch(const std::exception& e)
+            {
+                makeDisconnect(client, server, clients);
+            }
         }
 
         // if some connections have been made and the server is empty now;
         if ((clients.size() == 0) && connectionMade) break;
     }
-    
 
     return 0;
 }

@@ -37,7 +37,7 @@ int cs::Server::makeServerSocket(void)
     try
     {
         serverSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
-        fcntl(serverSocket, F_SETFL, O_NONBLOCK); // temp
+        fcntl(serverSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
         POSIX::_bind(serverSocket, (struct sockaddr*)(&address), sizeof(address));
         POSIX::_listen(serverSocket, maxClientsCount);
     }
@@ -230,17 +230,6 @@ int cs::Server::getServerSocket(void)
 
 void cs::Server::disconnectClient(int clientSocket)
 {
-    /*
-    char infomsg[32];
-    sprintf(infomsg, "Disconnect socket: {%d} {%s}\n", clientSocket, getClientIP(clientSocket));
-    POSIX::_write(STDERR_FILENO, infomsg, strlen(infomsg));
-    write(STDOUT_FILENO, "1\n", 3);
-    clients.erase(clients.begin(), clients.find(clientSocket));
-    write(STDOUT_FILENO, "2\n", 3);
-    close(clientSocket);
-    //write(STDOUT_FILENO, "done\n", 6);
-    */
-
-   clients.erase(clientSocket);
-   close(clientSocket);
+   clients.erase(clientSocket);     // remove client from list.
+   close(clientSocket);             // close connection;
 }

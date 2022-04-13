@@ -149,6 +149,13 @@ namespace cs    // client-server
         // return server socket;
         int getServerSocket(void);
 
+        /* Desctiption:
+         * Disconect the client from the server. Recomend to rewrite or
+         * delete element from your clients vector if you get that.
+         * 
+         * ARGS:
+         * clientSocket - socket of client you want to remove;
+         */
         void disconnectClient(int clientSocket);
 
     private:
