@@ -41,6 +41,15 @@ namespace cs    // client-server
          * message - message you want to send to the client;
          */
         void sendMessage(char *message);
+
+        /* Description:
+         * Enable keep alive checking connection between client and server;
+         * 
+         * ARGS:
+         * serverSocket - socket we want to make keepalive checking;
+         * interval - interval between checking alive connection in seconds;
+         */
+        void enableKeepalive(int serverSocket, int interval);
     };
 }
 

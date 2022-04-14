@@ -4,7 +4,7 @@
 #include <iostream>         // std::cerr
 #include <sys/socket.h>     // struct sockaddr
 #include <unistd.h>         // close()
-#include <sys/fcntl.h>
+#include <netinet/tcp.h>    // TCP_KEEPINTVL
 
 cs::Client::Client(int port, char *IPv4)
 {
@@ -17,7 +17,8 @@ cs::Client::Client(int port, char *IPv4)
         POSIX::_inetPton(address.sin_family, IPv4, &address.sin_addr);
         
         serverSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
-        //fcntl(serverSocket, F_SETFL, O_NONBLOCK); // temp
+        enableKeepalive(serverSocket, 10);
+        
         POSIX::_connect(serverSocket, (struct sockaddr*)(&address), sizeof(address));
     }
     catch(const POSIX::PosixError& e)
@@ -64,5 +65,21 @@ void cs::Client::sendMessage(char *message)
     catch(const POSIX::PosixError& e)
     {
         std::cerr << e.what() << std::endl;
+    }
+}
+
+void cs::Client::enableKeepalive(int serverSocket, int interval)
+{
+    int keepaliveOpt = true;
+    try
+    {
+        // turn on keepalive;
+        POSIX::_setsockopt(serverSocket, SOL_SOCKET, SO_KEEPALIVE, &keepaliveOpt, sizeof(keepaliveOpt));
+        // set interval between checking;
+        POSIX::_setsockopt(serverSocket, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
     }
 }

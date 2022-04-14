@@ -94,7 +94,7 @@ bool cs::Server::acceptClientConnection(void)
     char info[64];
     sprintf(info, "Client %d (%s) connected to the server\n", clientSocket, getClientIP(clientSocket));
     POSIX::_write(STDOUT_FILENO, info, strlen(info));
-    //enableKeepalive(clientSocket, 10);
+    enableKeepalive(clientSocket, 10);
 
     return true;
 }
