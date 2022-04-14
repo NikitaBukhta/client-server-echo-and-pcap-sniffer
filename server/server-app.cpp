@@ -42,13 +42,23 @@ int main(int argc, char **argv)
     fd_set read_fds;                // read fields for check an client performance;
     struct timeval timeout = {0};   // checking interval;
     
+    // every iteration n, we make disconnect all passive connections;
+    unsigned short iterationCount = 0;
+    unsigned short iterationForCheck = 100;
+
     while (true)
-    {   
+    {  
+        if (iterationCount++ == iterationForCheck)
+        {
+            iterationCount = 0;
+        } 
+
         if(server.acceptClientConnection())
         {
             connectionMade = true;
             clients.clear();
             server.getClientSockets(clients);
+            iterationCount = 0;
         }
 
         // check every client
@@ -77,6 +87,15 @@ int main(int argc, char **argv)
                     // if connection is lost, make disconnect the client from the server;
                     else
                         makeDisconnect(client, server, clients);
+                }
+                // if client is passive;
+                else if (iterationCount == iterationForCheck)
+                {
+                    char clientInfo[70];
+                    sprintf(clientInfo, "Client %d (%s) disconnected for passive reason!", client, server.getClientIP(client));
+                    server.sendMessage("You have been disconnected for passive reason!");
+                    POSIX::_write(STDOUT_FILENO, clientInfo, strlen(clientInfo));
+                    makeDisconnect(client, server, clients);
                 }
             }
             // the same, if we cannot select the socket;

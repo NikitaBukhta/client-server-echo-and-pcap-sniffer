@@ -126,7 +126,7 @@ ssize_t cs::Server::readMessage(char *buffer, int clientSocket)
     }
     catch(const POSIX::PosixError& e)
     {
-        //std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
 
         strcpy(buf, "");    // fill buffer with empty string, if error is happened;
     }
