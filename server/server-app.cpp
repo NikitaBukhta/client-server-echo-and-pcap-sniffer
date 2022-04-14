@@ -68,9 +68,8 @@ int main(int argc, char **argv)
                     // if nothing is read, return 0;
                     if (server.readMessage(msg, client))
                     {
-                        server.modifyMessage(msg, "\n", false);
                         POSIX::_write(STDOUT_FILENO, msg, strlen(msg));
-                        server.modifyMessage(msg, "Server echo: ", true);
+                        //server.modifyMessage(msg, "Server echo: ", true);
                         server.sendMessage(msg, client);
 
                         strcpy(msg, "");    // clear msg data;

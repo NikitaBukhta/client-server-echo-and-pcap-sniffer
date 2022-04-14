@@ -18,7 +18,7 @@ cs::Client::Client(int port, char *IPv4)
         
         serverSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
         enableKeepalive(serverSocket, 10);
-        
+
         POSIX::_connect(serverSocket, (struct sockaddr*)(&address), sizeof(address));
     }
     catch(const POSIX::PosixError& e)
@@ -56,7 +56,7 @@ ssize_t cs::Client::readMessage(char *buffer)
     return nread;
 }
 
-void cs::Client::sendMessage(char *message)
+void cs::Client::sendMessage(const char *message)
 {
     try
     {

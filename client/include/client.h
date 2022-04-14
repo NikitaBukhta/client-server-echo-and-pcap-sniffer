@@ -40,7 +40,7 @@ namespace cs    // client-server
          * ARGS:
          * message - message you want to send to the client;
          */
-        void sendMessage(char *message);
+        void sendMessage(const char *message);
 
         /* Description:
          * Enable keep alive checking connection between client and server;

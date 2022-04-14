@@ -5,6 +5,31 @@
 #include <string.h>
 #include <iostream>
 
+void singleMessageMode(cs::Client& client, const char *msg)
+{
+    client.sendMessage(msg);
+    
+    char buffer[strlen(msg) + 30];
+    client.readMessage(buffer);
+
+    printf("%s", buffer);
+}
+
+void interactiveMode(cs::Client& client)
+{
+    char buffer[1024];
+
+    while (true)
+    {
+        printf("Waiting for your message: ");
+        fgets(buffer, sizeof(buffer) * sizeof(char), stdin);
+        if (strcmp(buffer, "\n") == 0) 
+            break;
+
+        singleMessageMode(client, buffer);
+    }
+}
+
 int main(int argc, char **argv)
 {
     if (argc < 3)
@@ -14,19 +39,18 @@ int main(int argc, char **argv)
     int port = atoi(argv[2]);
 
     cs::Client client(port, IPv4);
-    char buf[1024];     // place where contains messages from the server;
+    char *buffer = new char[1024];
+    client.readMessage(buffer);
+    printf("%s\n", buffer);
+    delete[] buffer;
 
-    // read message about connection result;
-    ssize_t nread = client.readMessage(buf);
-    write(STDOUT_FILENO, buf, nread);
+    if (argc == 3)
+        interactiveMode(client);
+    else
+    {
+        singleMessageMode(client, argv[3]);
+    }
 
-    char msg[1024];
-    //send message to the server;
-    std::cin >> msg;
-    client.sendMessage(msg);
-    // get feedback;
-    nread = client.readMessage(buf);
-    write(STDOUT_FILENO, buf, nread);
 
     return 0;
 }
