@@ -180,3 +180,18 @@ bool POSIX::_select(int socketFD, fd_set *readfds, fd_set *writefds, fd_set *err
 
     return ret;
 }
+
+ssize_t POSIX::_send(int socket, const void *buffer, size_t length, int flags)
+{
+    ssize_t ret = send(socket, buffer, length, flags);
+
+    if (ret == -1)
+    {
+        std::string error("send error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+    
+    return ret;
+}

@@ -4,6 +4,7 @@
 #include <netinet/in.h>     // struct sockaddr_in
 #include <map>
 #include <vector>
+#include <string>
 
 namespace cs    // client-server
 {
@@ -80,27 +81,7 @@ namespace cs    // client-server
          * return values:
          * return size of readen message;
          */
-        ssize_t readMessage(char *buffer, int clientSocket);
-
-        /* NOT TESTED!!!
-         *
-         * DESCRIPTION:
-         * read the first message that was sent to the server.
-         * Function works until the server didn't receive the message;
-         * Max message length you can read is 1024;
-         * 
-         * * ARGS:
-         * buffer - variable where we will save a read message;
-         * clientSocket - from which socket you want to read message;
-         * 
-         * Value record:
-         * if function has worked successfully, record a string with message
-         * content. Otherwise, empty string ("");
-         * 
-         * return values:
-         * return size of readen message;
-         */
-        ssize_t readMessage(char *buffer);
+        ssize_t readMessage(std::string& buffer, int clientSocket);
 
         /* Description:
          * Write all clients' sockets to the vector;
@@ -110,17 +91,19 @@ namespace cs    // client-server
          */
         void getClientSockets(std::vector<int>& clientSockets);
 
+        void getClientSockets(std::map<int, unsigned short>& clientSockets);
+
         /* Description:
          * Send message to the specific client by a socket;
          * Output information with an error to the screen, if
          * server cannot send message to the client;
          *
          * ARGS:
-         * message - message you want to send to the client;
+         * msg - message you want to send to the client;
          * clientSocket - socket of the client you want to 
          *      send the message;
          */
-        void sendMessage(const char *message, int clientSocket);
+        void sendMessage(const std::string& msg, int clientSocket);
 
         /* Description:
          * Send message to the all clients by a socket;
@@ -130,21 +113,9 @@ namespace cs    // client-server
          * work);
          *
          * ARGS:
-         * message - message you want to send to the client;
+         * msg - message you want to send to the client;
          */
-        void sendMessage(const char *message);
-
-        /* Description:
-         * add prefix to your message and the message start 
-         * or at the end;
-         *
-         * ARGS:
-         * message - message you want to modify;
-         * prefix - some string you want to merge with message;
-         * modifyAtStart - if true, add prefix in the message start.
-         *      Otherwise, modify message at the end;
-         */
-        void modifyMessage(char *message, const char *prefix, bool modifyAtStart);
+        void sendMessage(const std::string& msg);
 
         // return server socket;
         int getServerSocket(void);

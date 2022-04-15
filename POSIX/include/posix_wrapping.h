@@ -239,7 +239,9 @@ namespace POSIX
      */
     ssize_t _write(int socketFD, const void *buf, size_t nbyte);
 
-    /* Description:
+    /* select wrapping
+     *
+     * Description:
      * select() examines the I/O descriptor sets whose addresses are 
      * passed in readfds, writefds, and errorfds to see if some of 
      * their descriptors are ready for reading, are ready for writing, 
@@ -254,10 +256,54 @@ namespace POSIX
      * in all the sets.
      *
      * ARGS:
-     * socketFD - socket we check;
-     * readfds
+     * socketFD - This argument should be set to the highest-numbered file
+     *      descriptor in any of the three sets, plus 1.  The
+     *      indicated file descriptors in each set are checked, up to
+     *      this limit (but see BUGS).
+     * readfds - The file descriptors in this set are watched to see if
+     *      they are ready for reading.  A file descriptor is ready
+     *      for reading if a read operation will not block; in
+     *      particular, a file descriptor is also ready on end-of-file.
+     * writefds - The file descriptors in this set are watched to see if
+     *      they are ready for writing.  A file descriptor is ready
+     *      for writing if a write operation will not block.  However,
+     *      even if a file descriptor indicates as writable, a large
+     *      write may still block.
+     * errorfds - The file descriptors in this set are watched for
+     *      "exceptional conditions".
+     * 
+     * Return values:
+     * return true if socket is ready;
+     * return false if not;
      */
     bool _select(int socketFD, fd_set *readfds, fd_set *writefds, fd_set *errorfds, struct timeval *timeout);
+
+    /* send wrapping
+     *
+     * Description:
+     * The send() function shall initiate transmission of a message from 
+     * the specified socket to its peer. The send() function shall send 
+     * a message only when the socket is connected (including when the 
+     * peer of a connectionless socket has been set via connect()).
+     * 
+     * ARGS:
+     * socket - specifies the socket file descriptor we send message.
+     * buffer - points to the buffer containing the message to send.
+     * length - specifies the length of the message in bytes.
+     * flags - Specifies the type of message transmission. Values of 
+     *      this argument are formed by logically OR'ing zero or more 
+     *      of the following flags:
+     *      - MSG_EOR - terminates a record (if supported by the protocol).
+     *      - MSG_OOB - Sends out-of-band data on sockets that support 
+     *          out-of-band communications. The significance and semantics 
+     *          of out-of-band data are protocol-specific.
+     * 
+     * Retutrn values
+     * Upon successful completion, send() shall return the number of bytes 
+     * sent. 
+     * Otherwise throw PosixError with information about error;
+     */
+    ssize_t _send(int socket, const void *buffer, size_t length, int flags);
 };
 
 #endif // !POSIX_WRAPPING_H

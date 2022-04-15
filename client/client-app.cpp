@@ -1,29 +1,31 @@
 #include "client.h"
+#include "posix_wrapping.h"
 
 #include <stdexcept>
 #include <unistd.h>     // STDOUT_FINO
 #include <string.h>
 #include <iostream>
 
-void singleMessageMode(cs::Client& client, const char *msg)
+void singleMessageMode(cs::Client& client, const std::string& msg)
 {
     client.sendMessage(msg);
-    
-    char buffer[strlen(msg) + 30];
-    client.readMessage(buffer);
 
-    printf("%s", buffer);
+    std::string buffer;
+    client.readMessage(buffer);
+    buffer.push_back('\n');
+
+    POSIX::_write(STDOUT_FILENO, buffer.c_str(), buffer.size());
 }
 
 void interactiveMode(cs::Client& client)
 {
-    char buffer[1024];
+    std::string buffer;
 
     while (true)
     {
         printf("Waiting for your message: ");
-        fgets(buffer, sizeof(buffer) * sizeof(char), stdin);
-        if (strcmp(buffer, "\n") == 0) 
+        std::cin >> buffer;
+        if (buffer == "\n") 
             break;
 
         singleMessageMode(client, buffer);
@@ -39,17 +41,17 @@ int main(int argc, char **argv)
     int port = atoi(argv[2]);
 
     cs::Client client(port, IPv4);
-    char *buffer = new char[1024];
-    client.readMessage(buffer);
-    printf("%s\n", buffer);
-    delete[] buffer;
+
+    // get accept connection message from server;
+    std::string *acceptBuffer = new std::string;
+    POSIX::_write(STDOUT_FILENO, acceptBuffer->c_str(), acceptBuffer->size());
+    client.readMessage(*acceptBuffer);
+    delete acceptBuffer;
 
     if (argc == 3)
         interactiveMode(client);
     else
-    {
         singleMessageMode(client, argv[3]);
-    }
 
 
     return 0;

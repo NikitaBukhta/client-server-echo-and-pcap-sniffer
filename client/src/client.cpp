@@ -32,40 +32,45 @@ cs::Client::~Client(void)
     close(serverSocket);
 }
 
-ssize_t cs::Client::readMessage(char *buffer)
+ssize_t cs::Client::readMessage(std::string& buffer)
 {
     const unsigned short bufferSize = 1024;
-    char buf[bufferSize];      // place for writting off client's message;
+    char temp[bufferSize];      // place for writting off client's message;
     ssize_t nread;      // count of chars read;
     
     try
     {
-        nread = POSIX::_read(serverSocket, &buf, bufferSize);
+        nread = POSIX::_read(serverSocket, temp, bufferSize);
     }
     catch(const POSIX::PosixError& e)
     {
         std::cerr << e.what() << std::endl;
 
-        strcpy(buf, "");    // fill buffer with empty string, if error is happened;
+        strcpy(temp, "");    // fill buffer with empty string, if error is happened;
 
         return 0;
     }
 
-    strcpy(buffer, buf);
+    buffer.clear();         // clear buffer from old information;
+    buffer.append(temp);    // add new info;
 
     return nread;
 }
 
-void cs::Client::sendMessage(const char *message)
+void cs::Client::sendMessage(const std::string& msg)
 {
+    auto a = msg.c_str();
+    auto count = msg.size();
     try
     {
-        POSIX::_write(serverSocket, message, strlen(message));
+        POSIX::_send(serverSocket, msg.c_str(), sizeof(msg.c_str()), MSG_OOB);
     }
     catch(const POSIX::PosixError& e)
     {
         std::cerr << e.what() << std::endl;
     }
+
+    int c;
 }
 
 void cs::Client::enableKeepalive(int serverSocket, int interval)

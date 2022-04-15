@@ -5,6 +5,9 @@
 #include <vector>
 #include <unistd.h>         // STDOUT_FILENO
 #include <algorithm>        // std::find;
+#include <string>
+
+#define PREFIX "Server echo: "
 
 /* Description:
  * Desconnect the client from the server and rewrite content from
@@ -15,10 +18,10 @@
  * server - server where we remove the client;
  * clientList - vector with client sockets;
  */
-void makeDisconnect(int client, cs::Server& server, std::vector<int>& clientList)
+void makeDisconnect(int client, cs::Server& server, std::map<int, unsigned short>& clientList)
 {
     server.disconnectClient(client);
-    clientList.erase(std::find(clientList.begin(), clientList.end(), client));
+    clientList.erase(client);
 }
 
 int main(int argc, char **argv)
@@ -30,35 +33,28 @@ int main(int argc, char **argv)
     int port = atoi(argv[1]);
 
     cs::Server server(port, 10);
-    std::vector<int> clients;
+    // key - clientSocket, value - count of iteration;
+    std::map<int, unsigned short> clients;
     bool connectionMade = false;    /* this var is need in order to 
                                      * do not close the server, if
                                      * any connections have't made
                                      * earlier;
                                      */
-    char msg[1024];
-    char prefix[] = "Server echo: ";
+    std::string msg;
 
     fd_set read_fds;                // read fields for check an client performance;
     struct timeval timeout = {0};   // checking interval;
     
     // every iteration n, we make disconnect all passive connections;
-    unsigned short iterationCount = 0;
-    unsigned short iterationForCheck = 100;
+    unsigned short iterationForCheck = 40;
 
     while (true)
     {  
-        if (iterationCount++ == iterationForCheck)
-        {
-            iterationCount = 0;
-        } 
 
         if(server.acceptClientConnection())
         {
             connectionMade = true;
-            clients.clear();
             server.getClientSockets(clients);
-            iterationCount = 0;
         }
 
         // check every client
@@ -66,42 +62,46 @@ int main(int argc, char **argv)
         {
             // reinitialized the variables;
             FD_ZERO(&read_fds);
-            FD_SET(client, &read_fds);
+            FD_SET(client.first, &read_fds);
             timeout.tv_sec = 1;
             timeout.tv_usec = 0;
 
             try
             {
+                ++(client.second);
+
                 // check if client can send message;
-                if(POSIX::_select(client + 1, &read_fds, NULL, NULL, &timeout))
+                if(POSIX::_select(client.first + 1, &read_fds, NULL, NULL, &timeout))
                 {
                     // if nothing is read, return 0;
-                    if (server.readMessage(msg, client))
+                    if (server.readMessage(msg, client.first))
                     {
-                        POSIX::_write(STDOUT_FILENO, msg, strlen(msg));
-                        //server.modifyMessage(msg, "Server echo: ", true);
-                        server.sendMessage(msg, client);
+                        POSIX::_write(STDOUT_FILENO, (msg + "\n").c_str(), (sizeof(msg.c_str()) + 2 * sizeof(char)));
+                        msg = "Server echo " + msg + "\n";
+                        server.sendMessage(msg, client.first);
 
-                        strcpy(msg, "");    // clear msg data;
+                        // if we have got the message, reset the number of iterations to zero;
+                        client.second = 0;
                     }
                     // if connection is lost, make disconnect the client from the server;
                     else
-                        makeDisconnect(client, server, clients);
+                        makeDisconnect(client.first, server, clients);
                 }
                 // if client is passive;
-                else if (iterationCount == iterationForCheck)
+                else if (client.second == iterationForCheck)
                 {
                     char clientInfo[70];
-                    sprintf(clientInfo, "Client %d (%s) disconnected for passive reason!", client, server.getClientIP(client));
-                    server.sendMessage("You have been disconnected for passive reason!");
+                    sprintf(clientInfo, "Client %d (%s) disconnected for passive reason!", 
+                        client.first, server.getClientIP(client.first));
+                    server.sendMessage("You have been disconnected for passive reason!\n");
                     POSIX::_write(STDOUT_FILENO, clientInfo, strlen(clientInfo));
-                    makeDisconnect(client, server, clients);
+                    makeDisconnect(client.first, server, clients);
                 }
             }
             // the same, if we cannot select the socket;
             catch(const std::exception& e)
             {
-                makeDisconnect(client, server, clients);
+                makeDisconnect(client.first, server, clients);
             }
         }
 

@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 #include <netinet/in.h>
+#include <string>
 
 namespace cs    // client-server
 {
@@ -30,7 +31,7 @@ namespace cs    // client-server
          * return values:
          * return size of readen message;
          */
-        ssize_t readMessage(char *buffer);
+        ssize_t readMessage(std::string& buffer);
 
         /* Description:
          * Send message to the server by a socket;
@@ -40,7 +41,7 @@ namespace cs    // client-server
          * ARGS:
          * message - message you want to send to the client;
          */
-        void sendMessage(const char *message);
+        void sendMessage(const std::string& msg);
 
         /* Description:
          * Enable keep alive checking connection between client and server;
