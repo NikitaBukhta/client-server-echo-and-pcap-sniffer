@@ -24,7 +24,7 @@ void interactiveMode(cs::Client& client)
     while (true)
     {
         printf("Waiting for your message: ");
-        std::cin >> buffer;
+        std::getline(std::cin, buffer);     // read full line;
         if (buffer == "\n") 
             break;
 

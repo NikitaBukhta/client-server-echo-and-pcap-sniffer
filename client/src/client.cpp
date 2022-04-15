@@ -5,6 +5,7 @@
 #include <sys/socket.h>     // struct sockaddr
 #include <unistd.h>         // close()
 #include <netinet/tcp.h>    // TCP_KEEPINTVL
+#include <string>
 
 cs::Client::Client(int port, char *IPv4)
 {
@@ -60,10 +61,10 @@ ssize_t cs::Client::readMessage(std::string& buffer)
 void cs::Client::sendMessage(const std::string& msg)
 {
     auto a = msg.c_str();
-    auto count = msg.size();
+    auto count = msg.size() * sizeof(char);
     try
     {
-        POSIX::_send(serverSocket, msg.c_str(), sizeof(msg.c_str()), MSG_OOB);
+        POSIX::_send(serverSocket, msg.c_str(), msg.size() * sizeof(char), MSG_OOB);
     }
     catch(const POSIX::PosixError& e)
     {

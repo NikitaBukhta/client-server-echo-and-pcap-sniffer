@@ -134,6 +134,8 @@ ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
     buffer.clear();        // clear buffer from old information;
     buffer.append(temp);   // add new info;
 
+    //delete[] temp;
+
     return nread;
 }
 
