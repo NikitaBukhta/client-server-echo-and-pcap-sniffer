@@ -64,14 +64,12 @@ void cs::Client::sendMessage(const std::string& msg)
     auto count = msg.size() * sizeof(char);
     try
     {
-        POSIX::_send(serverSocket, msg.c_str(), msg.size() * sizeof(char), MSG_OOB);
+        POSIX::_send(serverSocket, msg.c_str(), msg.size(), MSG_OOB);
     }
     catch(const POSIX::PosixError& e)
     {
         std::cerr << e.what() << std::endl;
     }
-
-    int c;
 }
 
 void cs::Client::enableKeepalive(int serverSocket, int interval)

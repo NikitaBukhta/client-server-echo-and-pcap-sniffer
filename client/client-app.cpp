@@ -6,7 +6,7 @@
 #include <string.h>
 #include <iostream>
 
-void singleMessageMode(cs::Client& client, const std::string& msg)
+void singleMessageMode(cs::Client& client, std::string& msg)
 {
     client.sendMessage(msg);
 
@@ -45,13 +45,17 @@ int main(int argc, char **argv)
     // get accept connection message from server;
     std::string *acceptBuffer = new std::string;
     POSIX::_write(STDOUT_FILENO, acceptBuffer->c_str(), acceptBuffer->size());
+    //std::cout << acceptBuffer << std::endl;
     client.readMessage(*acceptBuffer);
     delete acceptBuffer;
 
     if (argc == 3)
         interactiveMode(client);
     else
-        singleMessageMode(client, argv[3]);
+    {
+        std::string msg = argv[3];
+        singleMessageMode(client, msg);
+    }
 
 
     return 0;

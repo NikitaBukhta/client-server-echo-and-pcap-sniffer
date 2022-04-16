@@ -122,7 +122,7 @@ ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
     
     try
     {
-        nread = POSIX::_read(clientSocket, &temp, bufferSize);
+        nread = POSIX::_read(clientSocket, temp, bufferSize);
     }
     catch(const POSIX::PosixError& e)
     {
@@ -133,8 +133,6 @@ ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
 
     buffer.clear();        // clear buffer from old information;
     buffer.append(temp);   // add new info;
-
-    //delete[] temp;
 
     return nread;
 }
