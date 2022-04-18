@@ -2,10 +2,10 @@
 #include "posix_wrapping.h"
 #include "connectionError.h"
 
-#include <unistd.h>     // close();
-#include <iostream>     // std::cerr
-#include <netinet/tcp.h>
-#include <fcntl.h>      // temp
+#include <unistd.h>         // close();
+#include <iostream>         // std::cerr
+#include <netinet/tcp.h>    // TCP_KEEPINTVL
+#include <fcntl.h>          // temp
 
 cs::Server::Server(int port, unsigned short maxClientsCount)
 {
@@ -211,6 +211,7 @@ int cs::Server::getServerSocket(void)
 
 void cs::Server::disconnectClient(int clientSocket)
 {
-   clients.erase(clientSocket);     // remove client from list.
-   close(clientSocket);             // close connection;
+    sendMessage("You was disconnected from the server!", clientSocket);
+    clients.erase(clientSocket);     // remove client from list.
+    close(clientSocket);             // close connection;
 }

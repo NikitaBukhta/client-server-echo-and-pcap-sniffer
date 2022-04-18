@@ -1,12 +1,10 @@
 #include "server.h"
 #include "posix_wrapping.h"
 
-#include <stdexcept>
-#include <vector>
-#include <unistd.h>         // STDOUT_FILENO
-#include <algorithm>        // std::find;
+#include <stdexcept>        // default exceptions;
+#include <unistd.h>         // STDOUT_FILENO;
 #include <string>
-#include <iostream>
+#include <iostream>         // cout, endl;
 
 #define PREFIX "Server echo: "
 
@@ -21,6 +19,8 @@
  */
 void makeDisconnect(int client, cs::Server& server, std::map<int, unsigned short>& clientList)
 {
+    std::cout << "Disconnect socket " << client << " (" << server.getClientIP(client) << " ): " << std::endl;
+
     server.disconnectClient(client);
     clientList.erase(client);
 }
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
                 std::cout << "Message from socket " << client->first << " (" 
                     << server.getClientIP(client->first) << " ): " << msg << std::endl;
                 
-                msg = "Server echo: " + msg + '\0';
+                msg = PREFIX + msg + '\0';
                 server.sendMessage(msg, client->first);
 
                 // if we have got the message, reset the number of iterations to zero;

@@ -1,10 +1,10 @@
 #include "client.h"
 #include "posix_wrapping.h"
 
-#include <stdexcept>
-#include <unistd.h>     // STDOUT_FINO
-#include <string.h>
-#include <iostream>
+#include <stdexcept>    // dedault exceptions;
+#include <unistd.h>     // STDOUT_FINO;
+#include <string>
+#include <iostream>     // cout, getline, cin, endl;
 
 void singleMessageMode(cs::Client& client, std::string& msg)
 {
