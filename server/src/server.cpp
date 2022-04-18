@@ -120,6 +120,7 @@ ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
     buffer.clear();        // clear buffer from old information;
 
     const unsigned short bufferSize = 1024;
+    // !!! WARNING, can be not empty fully after the last calling !!!
     char temp[bufferSize];      // place for writting off client's message;
     ssize_t nread;              // count of chars read;
     
@@ -134,7 +135,7 @@ ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
         return 0;
     }
 
-    buffer = temp;   // add new info;
+    buffer.append(temp, nread);   // add new info;
 
     return nread;
 }
@@ -163,7 +164,7 @@ void cs::Server::sendMessage(const std::string& msg, int clientSocket)
 {
     try
     {
-        POSIX::_send(clientSocket, msg.c_str(), msg.size(), MSG_OOB);
+        POSIX::_send(clientSocket, msg.c_str(), msg.size() + 1, MSG_OOB);
     }
     catch(const POSIX::PosixError& e)
     {

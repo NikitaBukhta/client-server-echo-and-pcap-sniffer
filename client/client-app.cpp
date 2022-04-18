@@ -29,7 +29,6 @@ void interactiveMode(cs::Client& client)
         if (buffer == "\n" || buffer == "") 
             break;
 
-        buffer.push_back('\0');
         singleMessageMode(client, buffer);
     }
 }
