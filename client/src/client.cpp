@@ -35,6 +35,8 @@ cs::Client::~Client(void)
 
 ssize_t cs::Client::readMessage(std::string& buffer)
 {
+    buffer.clear();         // clear buffer from old information;
+
     const unsigned short bufferSize = 1024;
     char temp[bufferSize];      // place for writting off client's message;
     ssize_t nread;      // count of chars read;
@@ -45,15 +47,13 @@ ssize_t cs::Client::readMessage(std::string& buffer)
     }
     catch(const POSIX::PosixError& e)
     {
-        std::cerr << e.what() << std::endl;
-
-        strcpy(temp, "");    // fill buffer with empty string, if error is happened;
+        buffer = "";   // add new info;
 
         return 0;
     }
 
-    buffer.clear();         // clear buffer from old information;
-    buffer.append(temp);    // add new info;
+    buffer = temp;    // add new info;
+    buffer.push_back('\0');
 
     return nread;
 }

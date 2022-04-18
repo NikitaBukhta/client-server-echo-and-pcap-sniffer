@@ -71,6 +71,7 @@ bool cs::Server::acceptClientConnection(void)
             throw cs::ConnectionError(errorMessage);
         }
 
+        fcntl(clientSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
         clients.emplace(clientSocket, clientAddress);
         sendMessage("Connected\n", clientSocket);
     }
@@ -116,6 +117,8 @@ char* cs::Server::getClientIP(int clientSocket)
 
 ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
 {    
+    buffer.clear();        // clear buffer from old information;
+
     const unsigned short bufferSize = 1024;
     char temp[bufferSize];      // place for writting off client's message;
     ssize_t nread;              // count of chars read;
@@ -126,13 +129,12 @@ ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
     }
     catch(const POSIX::PosixError& e)
     {
-        std::cerr << e.what() << std::endl;
+        buffer = "";   // add new info;
 
-        strcpy(temp, "");    // fill buffer with empty string, if error is happened;
+        return 0;
     }
 
-    buffer.clear();        // clear buffer from old information;
-    buffer.append(temp);   // add new info;
+    buffer = temp;   // add new info;
 
     return nread;
 }
@@ -161,7 +163,7 @@ void cs::Server::sendMessage(const std::string& msg, int clientSocket)
 {
     try
     {
-        POSIX::_send(clientSocket, msg.c_str(), msg.size() * sizeof(char), MSG_OOB);
+        POSIX::_send(clientSocket, msg.c_str(), msg.size(), MSG_OOB);
     }
     catch(const POSIX::PosixError& e)
     {

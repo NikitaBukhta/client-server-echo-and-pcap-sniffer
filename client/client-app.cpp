@@ -14,7 +14,7 @@ void singleMessageMode(cs::Client& client, std::string& msg)
     client.readMessage(buffer);
     buffer.push_back('\n');
 
-    POSIX::_write(STDOUT_FILENO, buffer.c_str(), buffer.size());
+    std::cout << buffer << std::endl;
 }
 
 void interactiveMode(cs::Client& client)
@@ -23,11 +23,13 @@ void interactiveMode(cs::Client& client)
 
     while (true)
     {
+        buffer.clear();
         printf("Waiting for your message: ");
         std::getline(std::cin, buffer);     // read full line;
-        if (buffer == "\n") 
+        if (buffer == "\n" || buffer == "") 
             break;
 
+        buffer.push_back('\0');
         singleMessageMode(client, buffer);
     }
 }
@@ -44,9 +46,8 @@ int main(int argc, char **argv)
 
     // get accept connection message from server;
     std::string *acceptBuffer = new std::string;
-    POSIX::_write(STDOUT_FILENO, acceptBuffer->c_str(), acceptBuffer->size());
-    //std::cout << acceptBuffer << std::endl;
     client.readMessage(*acceptBuffer);
+    std::cout << *acceptBuffer << std::endl;
     delete acceptBuffer;
 
     if (argc == 3)
