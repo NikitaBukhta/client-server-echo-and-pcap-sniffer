@@ -8,32 +8,9 @@
 
 using namespace client;
 
-void singleMessageMode(Client& client, std::string& msg)
-{
-    client.sendMessage(msg);
+void singleMessageMode(Client& client, std::string& msg);
 
-    std::string buffer;
-    client.readMessage(buffer);
-    buffer.push_back('\n');
-
-    std::cout << buffer << std::endl;
-}
-
-void interactiveMode(Client& client)
-{
-    std::string buffer;
-
-    while (true)
-    {
-        buffer.clear();
-        printf("Waiting for your message: ");
-        std::getline(std::cin, buffer);     // read full line;
-        if (buffer == "\n" || buffer == "") 
-            break;
-
-        singleMessageMode(client, buffer);
-    }
-}
+void interactiveMode(Client& client);
 
 int main(int argc, char **argv)
 {
@@ -61,4 +38,31 @@ int main(int argc, char **argv)
 
 
     return 0;
+}
+
+void singleMessageMode(Client& client, std::string& msg)
+{
+    client.sendMessage(msg);
+
+    std::string buffer;
+    client.readMessage(buffer);
+    buffer.push_back('\n');
+
+    std::cout << buffer << std::endl;
+}
+
+void interactiveMode(Client& client)
+{
+    std::string buffer;
+
+    while (true)
+    {
+        buffer.clear();
+        printf("Waiting for your message: ");
+        std::getline(std::cin, buffer);     // read full line;
+        if (buffer == "\n" || buffer == "") 
+            break;
+
+        singleMessageMode(client, buffer);
+    }
 }
