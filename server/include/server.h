@@ -48,9 +48,9 @@ namespace cs    // client-server
          * to new client with infomation about server overflow.
          * 
          * Return values:
-         * return true if connection was made;
+         * return number of clientSocket. If something is wrong, return 0;
          */
-        bool acceptClientConnection(void);
+        int acceptClientConnection(void);
 
         /* Description: 
          * Return client IP address in dotted-decimal notation. The string is 

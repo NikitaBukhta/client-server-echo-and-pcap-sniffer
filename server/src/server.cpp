@@ -51,7 +51,7 @@ int cs::Server::makeServerSocket(void)
     return EXIT_SUCCESS;
 }
 
-bool cs::Server::acceptClientConnection(void)
+int cs::Server::acceptClientConnection(void)
 {
     sockaddr_in clientAddress = {0};
     clientAddress.sin_family = address.sin_family;
@@ -71,25 +71,22 @@ bool cs::Server::acceptClientConnection(void)
             throw cs::ConnectionError(errorMessage);
         }
 
-        fcntl(clientSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
+        //fcntl(clientSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
         clients.emplace(clientSocket, clientAddress);
         sendMessage("Connected\n", clientSocket);
     }
     catch(const POSIX::PosixError& e)
     {
-        //std::cerr << e.what() << std::endl;
-
-        return false;
+        return 0;
     }
     catch(const cs::ConnectionError& e )
     {
         // send the error message and close connection with the client;
         std::string errorMessage = e.what();
         sendMessage(errorMessage, clientSocket);
-        //write(clientSocket, errorMessage, strlen(errorMessage));
         close(clientSocket);
 
-        return false;
+        return 0;
     }
     
     char info[64];
@@ -97,7 +94,7 @@ bool cs::Server::acceptClientConnection(void)
     POSIX::_write(STDOUT_FILENO, info, strlen(info));
     enableKeepalive(clientSocket, 10);
 
-    return true;
+    return clientSocket;
 }
 
 char* cs::Server::getClientIP(int clientSocket)
