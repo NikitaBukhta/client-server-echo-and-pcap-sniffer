@@ -17,13 +17,7 @@
  * server - server where we remove the client;
  * clientList - vector with client sockets;
  */
-void makeDisconnect(int client, cs::Server& server, std::map<int, unsigned short>& clientList)
-{
-    std::cout << "Disconnect socket " << client << " (" << server.getClientIP(client) << " ): " << std::endl;
-
-    server.disconnectClient(client);
-    clientList.erase(client);
-}
+void makeDisconnect(int client, cs::Server& server, std::map<int, unsigned short>& clientList);
 
 int main(int argc, char **argv)
 {
@@ -91,4 +85,12 @@ int main(int argc, char **argv)
     }
 
     return 0;
+}
+
+void makeDisconnect(int client, cs::Server& server, std::map<int, unsigned short>& clientList)
+{
+    std::cout << "Disconnect socket " << client << " (" << server.getClientIP(client) << " ): " << std::endl;
+
+    server.disconnectClient(client);
+    clientList.erase(client);
 }
