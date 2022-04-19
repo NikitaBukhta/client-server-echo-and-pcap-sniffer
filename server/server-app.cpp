@@ -59,7 +59,6 @@ int main(int argc, char **argv)
         {
             connectionMade = true;
             ++connectionCount;
-            std::cout << connectionCount << std::endl;
             // new thread for a new server;
             std::thread clientThread(clientCommunication, newClient, std::ref(server));
             clientThread.detach();
@@ -69,7 +68,10 @@ int main(int argc, char **argv)
          * just end the loop and turn off the server;
          */
         if (connectionMade && (connectionCount == 0))
+        {
+            std::cout << "Finish work!" << std::endl;
             return 0;
+        }
     }
 
     return 0;
@@ -85,7 +87,7 @@ void makeDisconnect(int client, cs::Server& server)
 
 void clientCommunication(int clientSocket, cs::Server& server)
 {
-    static unsigned short iterationForCheck = 60;
+    static unsigned short iterationForCheck = 10;
     unsigned short currentIteration = 0;
     std::string msg;
 
@@ -108,7 +110,6 @@ void clientCommunication(int clientSocket, cs::Server& server)
         else if (currentIteration >= iterationForCheck)
         {
             makeDisconnect(clientSocket, server);
-            std::cout << connectionCount << std::endl;
             return;
         }
 

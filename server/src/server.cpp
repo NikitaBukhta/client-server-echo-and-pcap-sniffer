@@ -209,6 +209,9 @@ int cs::Server::getServerSocket(void)
 void cs::Server::disconnectClient(int clientSocket)
 {
     sendMessage("You was disconnected from the server!", clientSocket);
-    clients.erase(clientSocket);     // remove client from list.
-    close(clientSocket);             // close connection;
+    if (clients.count(clientSocket) != 0)
+    {
+        clients.erase(clientSocket);     // remove client from list.
+        close(clientSocket);             // close connection;
+    }
 }
