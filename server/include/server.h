@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-namespace cs    // client-server
+namespace server
 {
     class Server
     {

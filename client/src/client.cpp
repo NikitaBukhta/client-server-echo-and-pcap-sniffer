@@ -7,7 +7,9 @@
 #include <netinet/tcp.h>    // TCP_KEEPINTVL
 #include <string>
 
-cs::Client::Client(int port, char *IPv4)
+using namespace client;
+
+Client::Client(int port, char *IPv4)
 {
     address = {0};
     address.sin_family = AF_INET;
@@ -28,12 +30,12 @@ cs::Client::Client(int port, char *IPv4)
     }
 }
 
-cs::Client::~Client(void)
+Client::~Client(void)
 {
     close(serverSocket);
 }
 
-ssize_t cs::Client::readMessage(std::string& buffer)
+ssize_t Client::readMessage(std::string& buffer)
 {
     buffer.clear();         // clear buffer from old information;
 
@@ -58,7 +60,7 @@ ssize_t cs::Client::readMessage(std::string& buffer)
     return nread;
 }
 
-void cs::Client::sendMessage(const std::string& msg)
+void Client::sendMessage(const std::string& msg)
 {
     auto a = msg.c_str();
     auto count = msg.size() * sizeof(char);
@@ -73,7 +75,7 @@ void cs::Client::sendMessage(const std::string& msg)
     }
 }
 
-void cs::Client::enableKeepalive(int serverSocket, int interval)
+void Client::enableKeepalive(int serverSocket, int interval)
 {
     int keepaliveOpt = true;
     try

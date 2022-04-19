@@ -8,6 +8,8 @@
 
 #define PREFIX "Server echo: "
 
+using namespace server;
+
 /* Description:
  * Desconnect the client from the server and rewrite content from
  * vector (remove disconnected client);
@@ -17,7 +19,7 @@
  * server - server where we remove the client;
  * clientList - vector with client sockets;
  */
-void makeDisconnect(int client, cs::Server& server, std::map<int, unsigned short>& clientList);
+void makeDisconnect(int client, Server& server, std::map<int, unsigned short>& clientList);
 
 int main(int argc, char **argv)
 {
@@ -27,7 +29,7 @@ int main(int argc, char **argv)
 
     int port = atoi(argv[1]);
 
-    cs::Server server(port, 10);
+    Server server(port, 10);
     // key - clientSocket, value - count of iteration;
     std::map<int, unsigned short> clients;
     bool connectionMade = false;    /* this var is need in order to 
@@ -87,7 +89,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void makeDisconnect(int client, cs::Server& server, std::map<int, unsigned short>& clientList)
+void makeDisconnect(int client, server::Server& server, std::map<int, unsigned short>& clientList)
 {
     std::cout << "Disconnect socket " << client << " (" << server.getClientIP(client) << " ): " << std::endl;
 

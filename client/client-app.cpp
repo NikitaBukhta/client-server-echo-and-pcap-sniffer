@@ -6,7 +6,9 @@
 #include <string>
 #include <iostream>     // cout, getline, cin, endl;
 
-void singleMessageMode(cs::Client& client, std::string& msg)
+using namespace client;
+
+void singleMessageMode(Client& client, std::string& msg)
 {
     client.sendMessage(msg);
 
@@ -17,7 +19,7 @@ void singleMessageMode(cs::Client& client, std::string& msg)
     std::cout << buffer << std::endl;
 }
 
-void interactiveMode(cs::Client& client)
+void interactiveMode(Client& client)
 {
     std::string buffer;
 
@@ -41,7 +43,7 @@ int main(int argc, char **argv)
     char* const IPv4 = argv[1];
     int port = atoi(argv[2]);
 
-    cs::Client client(port, IPv4);
+    Client client(port, IPv4);
 
     // get accept connection message from server;
     std::string *acceptBuffer = new std::string;
