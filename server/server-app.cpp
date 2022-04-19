@@ -10,6 +10,9 @@
 
 #define PREFIX "Server echo: "
 
+// count of connections;
+static int connectionCount = 0;
+
 /* Description:
  * Desconnect the client from the server and rewrite content from
  * vector (remove disconnected client);
@@ -29,7 +32,7 @@ void makeDisconnect(int client, cs::Server& server);
  * clientVector - list of clients that connected to the server. 
  *      That is needed for disconnecting the clients;
  */
-void clientCommunication(int clientSocket, cs::Server& server, std::vector<int>& clientVector);
+void clientCommunication(int clientSocket, cs::Server& server);
 
 int main(int argc, char **argv)
 {
@@ -40,7 +43,6 @@ int main(int argc, char **argv)
     int port = atoi(argv[1]);
 
     cs::Server server(port, 10);
-    std::vector<int> clientVector;    //std::vector<int> clientsInThread;
 
     bool connectionMade = false;    /* this var is need in order to 
                                      * do not close the server, if
@@ -56,17 +58,18 @@ int main(int argc, char **argv)
         if((newClient = server.acceptClientConnection()) != 0)
         {
             connectionMade = true;
-            clientVector.push_back(newClient);
+            ++connectionCount;
+            std::cout << connectionCount << std::endl;
             // new thread for a new server;
-            std::thread clientThread(clientCommunication, newClient, std::ref(server), std::ref(clientVector));
+            std::thread clientThread(clientCommunication, newClient, std::ref(server));
             clientThread.detach();
         }
 
         /* if one more connection was made and now there are no connection,
          * just end the loop and turn off the server;
          */
-        if (connectionMade && clientVector.size() == 0)
-            break;
+        if (connectionMade && (connectionCount == 0))
+            return 0;
     }
 
     return 0;
@@ -75,11 +78,12 @@ int main(int argc, char **argv)
 void makeDisconnect(int client, cs::Server& server)
 {
     std::cout << "Disconnect socket " << client << " (" << server.getClientIP(client) << ")" << std::endl;
+    --connectionCount;
 
     server.disconnectClient(client);
 }
 
-void clientCommunication(int clientSocket, cs::Server& server, std::vector<int>& clientVector)
+void clientCommunication(int clientSocket, cs::Server& server)
 {
     static unsigned short iterationForCheck = 60;
     unsigned short currentIteration = 0;
@@ -104,7 +108,7 @@ void clientCommunication(int clientSocket, cs::Server& server, std::vector<int>&
         else if (currentIteration >= iterationForCheck)
         {
             makeDisconnect(clientSocket, server);
-            clientVector.erase(std::find(clientVector.begin(), clientVector.end(), clientSocket));
+            std::cout << connectionCount << std::endl;
             return;
         }
 
