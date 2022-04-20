@@ -5,7 +5,6 @@
 #include <unistd.h>         // close();
 #include <iostream>         // std::cerr
 #include <netinet/tcp.h>    // TCP_KEEPINTVL
-#include <fcntl.h>          
 
 using namespace server;
 
@@ -39,7 +38,7 @@ int Server::makeServerSocket(void)
     try
     {
         serverSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
-        fcntl(serverSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
+        POSIX::_fcntl(serverSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
         POSIX::_bind(serverSocket, (struct sockaddr*)(&address), sizeof(address));
         POSIX::_listen(serverSocket, maxClientsCount);
     }
@@ -73,7 +72,6 @@ int Server::acceptClientConnection(void)
             throw cs::ConnectionError(errorMessage);
         }
 
-        //fcntl(clientSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
         clients.emplace(clientSocket, clientAddress);
         sendMessage("Connected\n", clientSocket);
     }
