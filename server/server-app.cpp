@@ -10,6 +10,8 @@
 
 #define PREFIX "Server echo: "
 
+using namespace server;
+
 // count of connections;
 static int connectionCount = 0;
 
@@ -21,7 +23,7 @@ static int connectionCount = 0;
  * client - client socket;
  * server - server where we remove the client;
  */
-void makeDisconnect(int client, cs::Server& server);
+void makeDisconnect(int client, Server& server);
 
 /* Desctiption:
  * With function contains interaction between client and server;
@@ -32,7 +34,7 @@ void makeDisconnect(int client, cs::Server& server);
  * clientVector - list of clients that connected to the server. 
  *      That is needed for disconnecting the clients;
  */
-void clientCommunication(int clientSocket, cs::Server& server);
+void clientCommunication(int clientSocket, Server& server);
 
 int main(int argc, char **argv)
 {
@@ -42,7 +44,7 @@ int main(int argc, char **argv)
 
     int port = atoi(argv[1]);
 
-    cs::Server server(port, 10);
+    Server server(port, 10);
 
     bool connectionMade = false;    /* this var is need in order to 
                                      * do not close the server, if
@@ -77,7 +79,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void makeDisconnect(int client, cs::Server& server)
+void makeDisconnect(int client, Server& server)
 {
     std::cout << "Disconnect socket " << client << " (" << server.getClientIP(client) << ")" << std::endl;
     --connectionCount;
@@ -85,7 +87,7 @@ void makeDisconnect(int client, cs::Server& server)
     server.disconnectClient(client);
 }
 
-void clientCommunication(int clientSocket, cs::Server& server)
+void clientCommunication(int clientSocket, Server& server)
 {
     static unsigned short iterationForCheck = 10;
     unsigned short currentIteration = 0;

@@ -1,19 +1,13 @@
 #include "connectionError.h"
 
-#include <string.h>
+using namespace cs;
 
-cs::ConnectionError::ConnectionError(char *msg)
+ConnectionError::ConnectionError(const std::string& msg)
 {
-    errorMessage = new char[strlen(msg)];
-    strcpy(errorMessage, msg);
+    errorMessage = msg;
 }
 
-cs::ConnectionError::~ConnectionError(void)
+const char* ConnectionError::what(void) const noexcept
 {
-    delete[] errorMessage;
-}
-
-const char* cs::ConnectionError::what(void) const noexcept
-{
-    return errorMessage;
+    return errorMessage.c_str();
 }

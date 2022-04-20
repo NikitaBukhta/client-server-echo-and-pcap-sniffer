@@ -1,0 +1,169 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3
+					],
+					"jsonFile" : "directory-.-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "POSIX",
+					"jsonFile" : "directory-POSIX-c28ecfc920392be05834.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "POSIX",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "server",
+					"jsonFile" : "directory-server-244843e92778ba082abc.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "server",
+					"targetIndexes" : 
+					[
+						3,
+						4
+					]
+				},
+				{
+					"build" : "client",
+					"jsonFile" : "directory-client-eda4c8a4dacec2844350.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "client",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "Client-Server",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "server",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3,
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "server",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 3,
+					"id" : "client-app::@b0c487aac068df482bf0",
+					"jsonFile" : "target-client-app-4140a0f3ddd4ed03d2d1.json",
+					"name" : "client-app",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "client_class::@b0c487aac068df482bf0",
+					"jsonFile" : "target-client_class-6dd9b6f2aaff391dc5b9.json",
+					"name" : "client_class",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "posix_lib::@ea204388c4322537198c",
+					"jsonFile" : "target-posix_lib-26b2a0e5d50cd6fd429f.json",
+					"name" : "posix_lib",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "server-app::@d19778d2e34a1e3ddfc0",
+					"jsonFile" : "target-server-app-3d43d6ef356f0af13cc1.json",
+					"name" : "server-app",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "server_class::@d19778d2e34a1e3ddfc0",
+					"jsonFile" : "target-server_class-823c97d8664a24aff2dc.json",
+					"name" : "server_class",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build",
+		"source" : "/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

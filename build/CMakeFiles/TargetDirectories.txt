@@ -1,0 +1,13 @@
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/CMakeFiles/edit_cache.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/CMakeFiles/rebuild_cache.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/POSIX/CMakeFiles/posix_lib.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/POSIX/CMakeFiles/edit_cache.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/POSIX/CMakeFiles/rebuild_cache.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/server/CMakeFiles/server-app.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/server/CMakeFiles/server_class.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/server/CMakeFiles/edit_cache.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/server/CMakeFiles/rebuild_cache.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/client/CMakeFiles/client-app.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/client/CMakeFiles/client_class.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/client/CMakeFiles/edit_cache.dir
+/Users/nikitabukhta/Documents/Projects/client-server echo and pcap sniffer/client-server-echo-and-pcap-sniffer/build/client/CMakeFiles/rebuild_cache.dir

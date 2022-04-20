@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 #include <string>
 
-namespace cs    // client-server
+namespace client    // client-server
 {
     class Client
     {

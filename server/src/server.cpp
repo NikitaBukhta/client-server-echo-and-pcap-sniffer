@@ -5,9 +5,11 @@
 #include <unistd.h>         // close();
 #include <iostream>         // std::cerr
 #include <netinet/tcp.h>    // TCP_KEEPINTVL
-#include <fcntl.h>          // temp
+#include <fcntl.h>          
 
-cs::Server::Server(int port, unsigned short maxClientsCount)
+using namespace server;
+
+Server::Server(int port, unsigned short maxClientsCount)
 {
     address.sin_family = AF_INET;
     address.sin_port = htons(port);
@@ -16,11 +18,11 @@ cs::Server::Server(int port, unsigned short maxClientsCount)
     makeServerSocket();
 }
 
-cs::Server::Server(int port) : Server(port, 1)
+Server::Server(int port) : Server(port, 1)
 {
 }
 
-cs::Server::~Server(void)
+Server::~Server(void)
 {
     // close all clients;
     for (auto client : clients)
@@ -32,7 +34,7 @@ cs::Server::~Server(void)
     close(serverSocket);
 }
 
-int cs::Server::makeServerSocket(void)
+int Server::makeServerSocket(void)
 {
     try
     {
@@ -51,7 +53,7 @@ int cs::Server::makeServerSocket(void)
     return EXIT_SUCCESS;
 }
 
-int cs::Server::acceptClientConnection(void)
+int Server::acceptClientConnection(void)
 {
     sockaddr_in clientAddress = {0};
     clientAddress.sin_family = address.sin_family;
@@ -97,7 +99,7 @@ int cs::Server::acceptClientConnection(void)
     return clientSocket;
 }
 
-char* cs::Server::getClientIP(int clientSocket)
+char* Server::getClientIP(int clientSocket)
 {
     auto client = clients.find(clientSocket);  
     
@@ -112,7 +114,7 @@ char* cs::Server::getClientIP(int clientSocket)
     }
 }
 
-ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
+ssize_t Server::readMessage(std::string &buffer, int clientSocket)
 {    
     buffer.clear();        // clear buffer from old information;
 
@@ -137,7 +139,7 @@ ssize_t cs::Server::readMessage(std::string &buffer, int clientSocket)
     return nread;
 }
 
-void cs::Server::getClientSockets(std::vector<int>& clientSockets)
+void Server::getClientSockets(std::vector<int>& clientSockets)
 {
     for (auto& client : clients)
     {
@@ -145,7 +147,7 @@ void cs::Server::getClientSockets(std::vector<int>& clientSockets)
     }
 }
 
-void cs::Server::getClientSockets(std::map<int, unsigned short>& clientSockets)
+void Server::getClientSockets(std::map<int, unsigned short>& clientSockets)
 {
     for (auto& client : clients)
     {
@@ -157,7 +159,7 @@ void cs::Server::getClientSockets(std::map<int, unsigned short>& clientSockets)
     }
 }
 
-void cs::Server::sendMessage(const std::string& msg, int clientSocket)
+void Server::sendMessage(const std::string& msg, int clientSocket)
 {
     try
     {
@@ -169,7 +171,7 @@ void cs::Server::sendMessage(const std::string& msg, int clientSocket)
     }
 }
 
-void cs::Server::sendMessage(const std::string& msg)
+void Server::sendMessage(const std::string& msg)
 {
     for (auto client : clients)
     {
@@ -185,7 +187,7 @@ void cs::Server::sendMessage(const std::string& msg)
     }
 }
 
-void cs::Server::enableKeepalive(int clientSocket, int interval)
+void Server::enableKeepalive(int clientSocket, int interval)
 {
     int keepaliveOpt = true;
     try
@@ -201,12 +203,12 @@ void cs::Server::enableKeepalive(int clientSocket, int interval)
     }
 }
 
-int cs::Server::getServerSocket(void)
+int Server::getServerSocket(void)
 {
     return serverSocket;
 }
 
-void cs::Server::disconnectClient(int clientSocket)
+void Server::disconnectClient(int clientSocket)
 {
     sendMessage("You was disconnected from the server!", clientSocket);
     if (clients.count(clientSocket) != 0)

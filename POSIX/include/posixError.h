@@ -2,18 +2,17 @@
 #define POSIX_ERROR_H
 
 #include <exception>
+#include <string>
 
 namespace POSIX
 {
     class PosixError : public std::exception
     {
     private:
-        char *errorMessage;
+        std::string errorMessage;
 
     public:
-        PosixError(const char *msg);
-        
-        ~PosixError(void);
+        PosixError(const std::string& msg);
 
         virtual const char* what(void) const noexcept override;
     };

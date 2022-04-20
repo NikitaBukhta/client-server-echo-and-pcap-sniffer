@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libposix_lib.a CMakeFiles/posix_lib.dir/src/posix_wrapping.cpp.o CMakeFiles/posix_lib.dir/src/posixError.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libposix_lib.a

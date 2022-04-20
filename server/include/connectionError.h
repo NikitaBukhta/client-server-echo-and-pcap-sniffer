@@ -2,18 +2,17 @@
 #define CONNECTION_ERROR_H
 
 #include <exception>
+#include <string>
 
 namespace cs
 {
     class ConnectionError : std::exception
     {
     private:
-        char *errorMessage;
+        std::string errorMessage;
         
     public:
-        ConnectionError(char *msg);
-
-        ~ConnectionError(void);
+        ConnectionError(const std::string& msg);
 
         virtual const char* what(void) const noexcept override;
     };

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libserver_class.a CMakeFiles/server_class.dir/src/server.cpp.o CMakeFiles/server_class.dir/src/connectionError.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libserver_class.a
