@@ -26,10 +26,8 @@ Server::Server(int port) : Server(port, 1)
 Server::~Server(void)
 {
     // close all clients;
-    for (auto& client : clients)
-    {
-        disconnectClient(client.first);
-    }
+    while(clients.size() != 0)
+        disconnectClient(clients.begin()->first);
     
     // close server;
     close(serverSocket);
@@ -209,6 +207,4 @@ void Server::disconnectClient(int clientSocket)
         close(clientSocket);        // close connection;
 
     }
-    else
-        std::cout << "Not disconnected socket: " << clientSocket << std::endl;
 }

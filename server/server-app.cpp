@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 
     int port = atoi(argv[1]);
 
-    Server server(port, 2);
+    static Server server(port, 2);
 
     bool connectionMade = false;    /* this var is need in order to 
                                      * do not close the server, if
