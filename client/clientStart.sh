@@ -19,13 +19,10 @@ done
 # place where executable file
 CLIENT_APP="${SCRIPT_DIR}/../build/client/client-app"
 # place where command with args contains for start app
-TEMP_SCRIPT="${SCRIPT_DIR}/tmp.sh"
+TEMP_SCRIPT="${SCRIPT_DIR}/temp.sh"
 if [[ $ARG_4 != "" ]]; then
-    echo "Signle message"
-    echo "ARG_4 $ARG_4"
     echo "\"${CLIENT_APP}\" $2 $3 \"$ARG_4\"" > "${TEMP_SCRIPT}"    #single message mode
 else
-    echo "interactive"
     echo "\"${CLIENT_APP}\" $2 $3" > "${TEMP_SCRIPT}"   # interactive mode
 fi
 # give rules for execute;

@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 
     int port = atoi(argv[1]);
 
-    Server server(port, 10);
+    Server server(port, 2);
 
     bool connectionMade = false;    /* this var is need in order to 
                                      * do not close the server, if
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         if (connectionMade && (connectionCount == 0))
         {
             std::cout << "Finish work!" << std::endl;
-            return 0;
+            break;
         }
     }
 
@@ -89,7 +89,7 @@ void makeDisconnect(int client, Server& server)
 
 void clientCommunication(int clientSocket, Server& server)
 {
-    static unsigned short iterationForCheck = 10;
+    static unsigned short iterationForCheck = 20;
     unsigned short currentIteration = 0;
     std::string msg;
 
