@@ -8,6 +8,8 @@
 #include <thread>
 #include <chrono>
 
+#include <pcap.h>
+
 #define PREFIX "Server echo: "
 
 using namespace server;
@@ -35,6 +37,8 @@ void makeDisconnect(int client, Server& server);
  *      That is needed for disconnecting the clients;
  */
 void clientCommunication(int clientSocket, Server& server);
+
+void pcapSniffing(void);
 
 int main(int argc, char **argv)
 {
@@ -64,6 +68,8 @@ int main(int argc, char **argv)
             // new thread for a new server;
             std::thread clientThread(clientCommunication, newClient, std::ref(server));
             clientThread.detach();
+
+            pcapSniffing();
         }
 
         /* if one more connection was made and now there are no connection,
@@ -116,5 +122,32 @@ void clientCommunication(int clientSocket, Server& server)
         }
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
+
+void pcapSniffing(void)
+{
+    pcap_if_t *devs, *device;
+    char errBuf[PCAP_ERRBUF_SIZE];
+    int devsCount = 0;
+
+    pcap_findalldevs(&devs, errBuf);
+
+    for(device=devs; device; device=device->next)
+    {
+        printf("%d. %s", ++devsCount, device->name);
+        if (device->description)
+        {
+            printf("(%s)\n", device->description);
+        }
+        else
+        {
+            printf(" (No description available)\n");
+        }
+    }
+    if(devsCount==0)
+    {
+        printf("\nNo interfaces found!\n");
+        return;
     }
 }
