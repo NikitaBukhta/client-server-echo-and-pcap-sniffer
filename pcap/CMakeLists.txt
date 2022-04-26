@@ -8,6 +8,7 @@ set(
 set(
     SRC
     src/pcap_wrapping.cpp
+    src/pcapError.cpp
 )
 
 add_library(
