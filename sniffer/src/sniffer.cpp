@@ -1,4 +1,5 @@
 #include "sniffer.h"
+#include "pcap_config.h"
 
 PCAP::Sniffer::Sniffer(const std::string& device, const std::string& filter)
 {
@@ -60,9 +61,17 @@ void PCAP::Sniffer::sniff(void)
 {
     struct pcap_pkthdr header;
 
+    const struct sniff_ip *ip;      // the IP header;
+    const struct sniff_tcp *tcp;    // the TCP header
+	const char *payload;            // Packet payload 
+
+    std::string packet;
+    u_int sizeIP;
+	u_int sizeTCP;
+
     try
     {
-        PCAP::_pcap_next(handle, &header);
+        packet.append(reinterpret_cast<const char*>(PCAP::_pcap_next(handle, &header)));
 
         std::cout << "Packet # " << ++sniffedPacketsCount << ":" << std::endl;
 
@@ -70,8 +79,15 @@ void PCAP::Sniffer::sniff(void)
             std::cout << "Warning! Captured size is different that packet size: " << header.len << std::endl;
         else
             std::cout << "Packet size: " << header.len << " byts" << std::endl;
+
+        ip = (struct sniff_ip*)(packet.c_str() + SIZE_ETHERNET);
+        sizeIP = IP_HL(ip) * 4;
+
+        tcp = (struct sniff_tcp*)(packet.c_str() + SIZE_ETHERNET + sizeIP);
     }
     catch(const std::exception& e) {}
+
+    packet.clear();
 }
 
 unsigned short PCAP::Sniffer::nonZeroBits(uint32_t number) const
