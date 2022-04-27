@@ -65,13 +65,17 @@ void PCAP::Sniffer::sniff(void)
     const struct sniff_tcp *tcp;    // the TCP header
 	const char *payload;            // Packet payload 
 
-    std::string packet;
+    /* I do not use std::string, because std::string need char,
+     * but unsigned char is needed. So if we make the cast to char,
+     * some errors may happen.
+     */
+    const u_char *packet;
     u_int sizeIP;
 	u_int sizeTCP;
 
     try
     {
-        packet.append(reinterpret_cast<const char*>(PCAP::_pcap_next(handle, &header)));
+        packet = PCAP::_pcap_next(handle, &header);
 
         std::cout << "Packet # " << ++sniffedPacketsCount << ":" << std::endl;
 
@@ -79,10 +83,32 @@ void PCAP::Sniffer::sniff(void)
             std::cout << "Warning! Captured size is different that packet size: " << header.len << std::endl;
         else
             std::cout << "Packet size: " << header.len << " byts" << std::endl;
+
+        ip = (struct sniff_ip*)(packet + SIZE_ETHERNET);
+        sizeIP = IP_HL(ip) * 4;
+
+        if (sizeIP < 20)
+        {
+            std::cout << "Invalid IP header size: " << sizeIP << " bytes" << std::endl;
+            return;
+        }
+
+        tcp = (struct sniff_tcp*)(packet + SIZE_ETHERNET + sizeIP);
+        sizeTCP = TH_OFF(tcp) * 4;
+        
+        if (sizeTCP < 20)
+        {
+            std::cout << "Invalid TCP header size: " << sizeTCP << " bytes" << std::endl;
+            return;
+        }
+
+        std::cout << "Source port: " << tcp->th_sport << std::endl;
+        std::cout << "Destination port: " << tcp->th_dport << std::endl;
+
+        std::cout << "Source IP: " << POSIX::_inetNtoa(ip->ip_src) << std::endl;
+        std::cout << "Source IP: " << POSIX::_inetNtoa(ip->ip_dst) << std::endl;
     }
     catch(const std::exception& e) {}
-
-    packet.clear();
 }
 
 unsigned short PCAP::Sniffer::nonZeroBits(uint32_t number) const
