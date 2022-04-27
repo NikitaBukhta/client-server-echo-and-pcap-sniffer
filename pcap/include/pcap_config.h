@@ -36,6 +36,7 @@
 // ---------------------------------- TYPEDEFS ---------------------------------- //
 typedef u_int tcp_seq;
 
+// --------------------------------- Structures --------------------------------- //
 namespace PCAP
 {
     // Ethernet header 
@@ -61,6 +62,7 @@ namespace PCAP
         struct in_addr ip_dst;  // destination address;
     };
 
+    // TCP header
     struct sniff_tcp 
     {
         u_short th_sport;	// source port;
@@ -69,7 +71,6 @@ namespace PCAP
         tcp_seq th_ack;		// acknowledgement number;
         u_char th_offx2;	// data offset, rsvd;
         u_char th_flags;
-    
         u_short th_win;		// window;
         u_short th_sum;		// checksum;
         u_short th_urp;		// urgent pointer;
