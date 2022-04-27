@@ -1,6 +1,8 @@
 #ifndef PCAP_WRAPPING_H
 #define PCAP_WRAPPING_H
 
+#include "pcapError.h"
+
 #include <pcap.h>
 
 namespace PCAP

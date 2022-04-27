@@ -1,5 +1,6 @@
 #include "server.h"
 #include "posix_wrapping.h"
+#include "pcap_wrapping.h"
 
 #include <stdexcept>        // default exceptions;
 #include <unistd.h>         // STDOUT_FILENO;
@@ -8,7 +9,7 @@
 #include <thread>
 #include <chrono>
 
-#include <pcap.h>
+#define DEVICE "en0"
 
 #define PREFIX "Server echo: "
 
@@ -38,7 +39,15 @@ void makeDisconnect(int client, Server& server);
  */
 void clientCommunication(int clientSocket, Server& server);
 
-void pcapSniffing(void);
+/* Description:
+ * sniffing the packets from the specific device;
+ * 
+ * ARGS:
+ * device - the device we are sniffing;
+ */
+void pcapSniffing(const std::string& device);
+
+int calculateMaskLength(uint32_t address);
 
 int main(int argc, char **argv)
 {
@@ -58,6 +67,8 @@ int main(int argc, char **argv)
     
     int newClient = 0;
 
+    pcapSniffing(DEVICE);
+
     while (true)
     {  
 
@@ -68,8 +79,6 @@ int main(int argc, char **argv)
             // new thread for a new server;
             std::thread clientThread(clientCommunication, newClient, std::ref(server));
             clientThread.detach();
-
-            pcapSniffing();
         }
 
         /* if one more connection was made and now there are no connection,
@@ -125,29 +134,44 @@ void clientCommunication(int clientSocket, Server& server)
     }
 }
 
-void pcapSniffing(void)
+void pcapSniffing(const std::string& device)
 {
-    pcap_if_t *devs, *device;
-    char errBuf[PCAP_ERRBUF_SIZE];
-    int devsCount = 0;
+    bpf_u_int32 mask;		            // The netmask of our sniffing device
+	bpf_u_int32 net;		            // The IP of our sniffing device
+    struct bpf_program fp;              // The compiled filter expression
+    std::string filter = "tcp";    // sniffing only tcp and udp packets;
 
-    pcap_findalldevs(&devs, errBuf);
 
-    for(device=devs; device; device=device->next)
+    char *dev;  // temp;
+    try
     {
-        printf("%d. %s", ++devsCount, device->name);
-        if (device->description)
-        {
-            printf("(%s)\n", device->description);
-        }
-        else
-        {
-            printf(" (No description available)\n");
-        }
+        PCAP::_pcap_lookupnet(device.c_str(), &net, &mask);
+        pcap_t *handle = PCAP::_pcap_open_live(device.c_str(), BUFSIZ, 1, 1000);
+        PCAP::_pcap_compile(handle, &fp, filter.c_str(), 1, net);
     }
-    if(devsCount==0)
+    catch(const std::exception& e)
     {
-        printf("\nNo interfaces found!\n");
+        std::cerr << e.what() << '\n';
         return;
     }
+
+    struct in_addr IPv4 = {net};
+    struct in_addr IPMask = {mask};
+    std::cout << "Now we are listen to " << device << " (" << POSIX::_inetNtoa(IPv4) 
+            << " / " << calculateMaskLength(mask) << ")" << std::endl;
+}
+
+int calculateMaskLength(uint32_t address) 
+{
+    int maskLength = 0;
+
+    while (address > 0)
+    {
+        if (address & 1)
+            ++maskLength;
+        
+        address >>= 1;
+    }
+
+    return maskLength;
 }
