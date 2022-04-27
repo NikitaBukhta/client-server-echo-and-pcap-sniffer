@@ -47,7 +47,16 @@ void clientCommunication(int clientSocket, Server& server);
  */
 void pcapSniffing(const std::string& device);
 
-int calculateMaskLength(uint32_t address);
+/* Description:
+ * calculate count of non zero bits of a number;
+ *
+ * ARGS:
+ * number - number you want to calculate;
+ * 
+ * Return values;
+ * return count of non-zero bits;
+ */
+int calculateCountOfNonZeroBits(uint32_t number);
 
 int main(int argc, char **argv)
 {
@@ -156,22 +165,21 @@ void pcapSniffing(const std::string& device)
     }
 
     struct in_addr IPv4 = {net};
-    struct in_addr IPMask = {mask};
     std::cout << "Now we are listen to " << device << " (" << POSIX::_inetNtoa(IPv4) 
-            << " / " << calculateMaskLength(mask) << ")" << std::endl;
+            << " / " << calculateCountOfNonZeroBits(mask) << ")" << std::endl;
 }
 
-int calculateMaskLength(uint32_t address) 
+int calculateCountOfNonZeroBits(uint32_t number) 
 {
-    int maskLength = 0;
+    int nonZeroBitsCount = 0;
 
-    while (address > 0)
+    while (number > 0)
     {
-        if (address & 1)
-            ++maskLength;
+        if (number & 1)
+            ++nonZeroBitsCount;
         
-        address >>= 1;
+        number >>= 1;
     }
 
-    return maskLength;
+    return nonZeroBitsCount;
 }
