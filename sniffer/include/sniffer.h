@@ -17,13 +17,15 @@ namespace PCAP
 	    bpf_u_int32 net;		            // The IP of our sniffing device
         std::string filter;
         struct bpf_program fp;  // The compiled filter expression
-
         pcap_t *handle;
+        unsigned int sniffedPacketsCount;
 
     public:
         Sniffer(const std::string& device, const std::string& filter);
 
         Sniffer(const std::string& device);
+
+        ~Sniffer(void);
 
         Sniffer(void);
 
@@ -44,7 +46,7 @@ namespace PCAP
 
         std::string getFilter(void) const;
 
-        void startSniffing(void);
+        void sniff(void);
 
     private:
         /* Description:

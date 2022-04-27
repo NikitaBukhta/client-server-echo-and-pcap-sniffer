@@ -7,12 +7,19 @@ PCAP::Sniffer::Sniffer(const std::string& device, const std::string& filter)
 
     this->handle = nullptr;
 
+    sniffedPacketsCount = 0;
+
     connectDevice();
 }
 
 PCAP::Sniffer::Sniffer(const std::string& device) : Sniffer(device, "") {}
 
 PCAP::Sniffer::Sniffer(void) : Sniffer("") {}
+
+PCAP::Sniffer::~Sniffer(void)
+{
+    pcap_close(handle);
+}
 
 void PCAP::Sniffer::setDevice(const std::string& device)
 {
@@ -47,6 +54,24 @@ void PCAP::Sniffer::setFilter(const std::string& filter)
 std::string PCAP::Sniffer::getFilter(void) const
 {
     return filter;
+}
+
+void PCAP::Sniffer::sniff(void)
+{
+    struct pcap_pkthdr header;
+
+    try
+    {
+        PCAP::_pcap_next(handle, &header);
+
+        std::cout << "Packet # " << ++sniffedPacketsCount << ":" << std::endl;
+
+        if (header.len != header.caplen)
+            std::cout << "Warning! Captured size is different that packet size: " << header.len << std::endl;
+        else
+            std::cout << "Packet size: " << header.len << " byts" << std::endl;
+    }
+    catch(const std::exception& e) {}
 }
 
 unsigned short PCAP::Sniffer::nonZeroBits(uint32_t number) const
