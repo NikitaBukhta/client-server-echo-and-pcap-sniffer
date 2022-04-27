@@ -79,11 +79,6 @@ void PCAP::Sniffer::sniff(void)
             std::cout << "Warning! Captured size is different that packet size: " << header.len << std::endl;
         else
             std::cout << "Packet size: " << header.len << " byts" << std::endl;
-
-        ip = (struct sniff_ip*)(packet.c_str() + SIZE_ETHERNET);
-        sizeIP = IP_HL(ip) * 4;
-
-        tcp = (struct sniff_tcp*)(packet.c_str() + SIZE_ETHERNET + sizeIP);
     }
     catch(const std::exception& e) {}
 
