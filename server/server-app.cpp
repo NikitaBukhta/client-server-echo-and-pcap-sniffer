@@ -1,11 +1,6 @@
 #include "server.h"
-#include "posix_wrapping.h"
-#include "pcap_wrapping.h"
+#include "sniffer.h"
 
-#include <stdexcept>        // default exceptions;
-#include <unistd.h>         // STDOUT_FILENO;
-#include <string>
-#include <iostream>         // cout, endl;
 #include <thread>
 #include <chrono>
 
@@ -39,27 +34,17 @@ void makeDisconnect(int client, Server& server);
  */
 void clientCommunication(int clientSocket, Server& server);
 
-/* Description:
- * sniffing the packets from the specific device;
- * 
- * ARGS:
- * device - the device we are sniffing;
- */
-void pcapSniffing(const std::string& device);
-
-/* Description:
- * calculate count of non zero bits of a number;
- *
- * ARGS:
- * number - number you want to calculate;
- * 
- * Return values;
- * return count of non-zero bits;
- */
-int calculateCountOfNonZeroBits(uint32_t number);
-
 int main(int argc, char **argv)
 {
+    using namespace PCAP;
+
+    Sniffer sniffer(DEVICE, "tcp");
+    while(true)
+    {
+        sniffer.sniff();
+        std::cout << std::endl;
+    }
+
     if (argc < 2)
         throw std::invalid_argument("You must pass the port number when starting "
             "the server!");
@@ -75,8 +60,6 @@ int main(int argc, char **argv)
                                      */
     
     int newClient = 0;
-
-    pcapSniffing(DEVICE);
 
     while (true)
     {  
@@ -141,45 +124,4 @@ void clientCommunication(int clientSocket, Server& server)
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-}
-
-void pcapSniffing(const std::string& device)
-{
-    bpf_u_int32 mask;		            // The netmask of our sniffing device
-	bpf_u_int32 net;		            // The IP of our sniffing device
-    struct bpf_program fp;              // The compiled filter expression
-    std::string filter = "tcp";    // sniffing only tcp and udp packets;
-
-
-    char *dev;  // temp;
-    try
-    {
-        PCAP::_pcap_lookupnet(device.c_str(), &net, &mask);
-        pcap_t *handle = PCAP::_pcap_open_live(device.c_str(), BUFSIZ, 1, 1000);
-        PCAP::_pcap_compile(handle, &fp, filter.c_str(), 1, net);
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-        return;
-    }
-
-    struct in_addr IPv4 = {net};
-    std::cout << "Now we are listen to " << device << " (" << POSIX::_inetNtoa(IPv4) 
-            << " / " << calculateCountOfNonZeroBits(mask) << ")" << std::endl;
-}
-
-int calculateCountOfNonZeroBits(uint32_t number) 
-{
-    int nonZeroBitsCount = 0;
-
-    while (number > 0)
-    {
-        if (number & 1)
-            ++nonZeroBitsCount;
-        
-        number >>= 1;
-    }
-
-    return nonZeroBitsCount;
 }

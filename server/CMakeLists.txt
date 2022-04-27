@@ -59,7 +59,7 @@ target_link_libraries(
 set(
     ALL_LIBS
     ${LIB_NAME}
-    pcap_lib
+    sniffer_lib
 )
 
 # all this libs;

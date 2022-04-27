@@ -12,5 +12,6 @@ set(CMAKE_EXE_LINKER_FLAGS -lpcap)
 
 add_subdirectory(POSIX)
 add_subdirectory(pcap)
+add_subdirectory(sniffer)
 add_subdirectory(server)
 add_subdirectory(client)
