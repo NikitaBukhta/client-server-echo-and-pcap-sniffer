@@ -2,4 +2,4 @@
 build
 debug
 main.dSYM
-client/temp.sh
+temp**
