@@ -1,14 +1,16 @@
 #include "sniffer.h"
 #include "pcap_config.h"
 
+unsigned int PCAP::Sniffer::sniffedPacketsCount = 0;
+
 PCAP::Sniffer::Sniffer(const std::string& device, const std::string& filter)
 {
     this->device = device;
     this->filter = filter;
 
-    this->handle = nullptr;
+    std::transform(this->filter.begin(), this->filter.end(), this->filter.begin(), ::tolower);
 
-    sniffedPacketsCount = 0;
+    this->handle = nullptr;
 
     connectDevice();
 }
@@ -37,6 +39,7 @@ std::string PCAP::Sniffer::getDevice(void) const
 void PCAP::Sniffer::setFilter(const std::string& filter)
 {
     this->filter = filter;
+    std::transform(this->filter.begin(), this->filter.end(), this->filter.begin(), ::tolower);
 
     if (handle != nullptr)
     {
@@ -61,8 +64,9 @@ void PCAP::Sniffer::sniff(void)
 {
     struct pcap_pkthdr header;
 
-    const struct sniff_ip *ip;      // the IP header;
-    const struct sniff_tcp *tcp;    // the TCP header
+    const struct sniffIP *ip;       // the IP header;
+    const struct sniffTCP *tcp;     // the TCP header
+    const struct sniffUDP *udp;     // the UDP headerl
 	const char *payload;            // Packet payload 
 
     /* I do not use std::string, because std::string need char,
@@ -84,7 +88,7 @@ void PCAP::Sniffer::sniff(void)
         else
             std::cout << "Packet size: " << header.len << " byts" << std::endl;
 
-        ip = (struct sniff_ip*)(packet + SIZE_ETHERNET);
+        ip = (struct sniffIP*)(packet + SIZE_ETHERNET);
         sizeIP = IP_HL(ip) * 4;
 
         if (sizeIP < 20)
@@ -93,20 +97,32 @@ void PCAP::Sniffer::sniff(void)
             return;
         }
 
-        tcp = (struct sniff_tcp*)(packet + SIZE_ETHERNET + sizeIP);
-        sizeTCP = TH_OFF(tcp) * 4;
-        
-        if (sizeTCP < 20)
+        std::cout << "Source IP: " << POSIX::_inetNtoa(ip->src) << std::endl;
+        std::cout << "Destination IP: " << POSIX::_inetNtoa(ip->dst) << std::endl;
+
+        if (filter == "tcp")
         {
-            std::cout << "Invalid TCP header size: " << sizeTCP << " bytes" << std::endl;
-            return;
+            tcp = (struct sniffTCP*)(packet + SIZE_ETHERNET + sizeIP);
+            sizeTCP = TH_OFF(tcp) * 4;
+            
+            if (sizeTCP < 20)
+            {
+                std::cout << "Invalid TCP header size: " << sizeTCP << " bytes" << std::endl;
+                return;
+            }
+
+            std::cout << "Protocol TCP: " << std::endl;
+            std::cout << "Source port: " << tcp->srcPort << std::endl;
+            std::cout << "Destination port: " << tcp->dstPort << std::endl;
         }
+        else if (filter == "udp")
+        {
+            udp = (struct sniffUDP*)(packet + SIZE_ETHERNET + sizeIP);
 
-        std::cout << "Source port: " << tcp->th_sport << std::endl;
-        std::cout << "Destination port: " << tcp->th_dport << std::endl;
-
-        std::cout << "Source IP: " << POSIX::_inetNtoa(ip->ip_src) << std::endl;
-        std::cout << "Source IP: " << POSIX::_inetNtoa(ip->ip_dst) << std::endl;
+            std::cout << "Protocol UDP" << std::endl;
+            std::cout << "Source port: " << udp->src << std::endl;
+            std::cout << "Destination port: " << udp->dst << std::endl;
+        }
     }
     catch(const std::exception& e) {}
 }

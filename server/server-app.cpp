@@ -34,16 +34,24 @@ void makeDisconnect(int client, Server& server);
  */
 void clientCommunication(int clientSocket, Server& server);
 
+/*Desctiption:
+ * Start sniffing in while loop
+ *
+ * ARGS:
+ * sniffer - object of class Sniffer that has specific device and
+ *      some filters mb;
+ */
+void startSniffing(PCAP::Sniffer& sniffer);
+
 int main(int argc, char **argv)
 {
     using namespace PCAP;
 
-    Sniffer sniffer(DEVICE, "tcp");
-    while(true)
-    {
-        sniffer.sniff();
-        std::cout << std::endl;
-    }
+    Sniffer snifferTCP(DEVICE, "tcp");
+    Sniffer snifferUDP(DEVICE, "udp");
+
+    std::thread(startSniffing, std::ref(snifferTCP)).detach();
+    std::thread(startSniffing, std::ref(snifferUDP)).detach();
 
     if (argc < 2)
         throw std::invalid_argument("You must pass the port number when starting "
@@ -123,5 +131,14 @@ void clientCommunication(int clientSocket, Server& server)
         }
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
+
+void startSniffing(PCAP::Sniffer& sniffer)
+{
+    while(true)
+    {
+        sniffer.sniff();
+        std::cout << std::endl;
     }
 }

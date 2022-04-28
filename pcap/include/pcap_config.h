@@ -29,9 +29,9 @@
 #define TH_FLAGS (TH_FIN|TH_SYN|TH_RST|TH_ACK|TH_URG|TH_ECE|TH_CWR)
 
 // ----------------------------------- MACROS ----------------------------------- //
-#define IP_HL(ip)   (((ip)->ip_vhl) & 0x0f)
-#define IP_V(ip)    (((ip)->ip_vhl) >> 4)
-#define TH_OFF(th)  (((th)->th_offx2 & 0xf0) >> 4)
+#define IP_HL(ip)   (((ip)->vhl) & 0x0f)
+#define IP_V(ip)    (((ip)->vhl) >> 4)
+#define TH_OFF(th)  (((th)->offx2 & 0xf0) >> 4)
 
 // ---------------------------------- TYPEDEFS ---------------------------------- //
 typedef u_int tcp_seq;
@@ -39,41 +39,50 @@ typedef u_int tcp_seq;
 // --------------------------------- Structures --------------------------------- //
 namespace PCAP
 {
-    // Ethernet header 
-    struct sniff_ethernet
+    // Ethernet header;
+    struct sniffEthernet
     {
         u_char ether_dhost[ETHER_ADDR_LEN];     // Destination host address; 
         u_char ether_shost[ETHER_ADDR_LEN];     // Source host address; 
         u_short ether_type;                     // IP? ARP? RARP? etc;
     };
 
-    // IP header
-    struct sniff_ip 
+    // IP header;
+    struct sniffIP 
     {
-        u_char ip_vhl;		    // version << 4 | header length >> 2;
-        u_char ip_tos;		    // type of service;
-        u_short ip_len;		    // total length;
-        u_short ip_id;		    // identification; 
-        u_short ip_off;		    // fragment offset field;
-        u_char ip_ttl;		    // time to live;
-        u_char ip_p;		    // protocol;
-        u_short ip_sum;		    // checksum;
-        struct in_addr ip_src;  // source address;
-        struct in_addr ip_dst;  // destination address;
+        u_char vhl;		        // version << 4 | header length >> 2;
+        u_char tos; 		    // type of service;
+        u_short len;		    // total length;
+        u_short id;		        // identification; 
+        u_short offset;		    // fragment offset field;
+        u_char ttl;		        // time to live;
+        u_char protocol;        // protocol;
+        u_short sum;		    // checksum;
+        struct in_addr src;     // source address;
+        struct in_addr dst;     // destination address;
     };
 
-    // TCP header
-    struct sniff_tcp 
+    // TCP header;
+    struct sniffTCP 
     {
-        u_short th_sport;	// source port;
-        u_short th_dport;	// destination port;
-        tcp_seq th_seq;		// sequence number;
-        tcp_seq th_ack;		// acknowledgement number;
-        u_char th_offx2;	// data offset, rsvd;
-        u_char th_flags;
-        u_short th_win;		// window;
-        u_short th_sum;		// checksum;
-        u_short th_urp;		// urgent pointer;
+        u_short srcPort;	// source port;
+        u_short dstPort;	// destination port;
+        tcp_seq seq;		// sequence number;
+        tcp_seq ack;		// acknowledgement number;
+        u_char offx2;	    // data offset, rsvd;
+        u_char flags;
+        u_short win;		// window;
+        u_short sum;		// checksum;
+        u_short urp;		// urgent pointer;
+    };
+
+    // UDP header;
+    struct sniffUDP
+    {
+        u_short src;
+        u_short dst;
+        u_short length;
+        u_short checksum;
     };
 }
 

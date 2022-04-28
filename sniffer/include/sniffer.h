@@ -18,7 +18,7 @@ namespace PCAP
         std::string filter;
         struct bpf_program fp;  // The compiled filter expression
         pcap_t *handle;
-        unsigned int sniffedPacketsCount;
+        static unsigned int sniffedPacketsCount;
 
     public:
         Sniffer(const std::string& device, const std::string& filter);
