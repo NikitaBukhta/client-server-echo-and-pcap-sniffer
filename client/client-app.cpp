@@ -5,6 +5,8 @@
 #include <unistd.h>     // STDOUT_FINO;
 #include <string>
 #include <iostream>     // cout, getline, cin, endl;
+#include <thread>
+#include <chrono>
 
 using namespace client;
 
@@ -36,7 +38,6 @@ int main(int argc, char **argv)
         singleMessageMode(client, msg);
     }
 
-
     return 0;
 }
 
@@ -55,14 +56,31 @@ void interactiveMode(Client& client)
 {
     std::string buffer;
 
-    while (true)
+    std::thread ([&]()
     {
-        buffer.clear();
-        printf("Waiting for your message: ");
-        std::getline(std::cin, buffer);     // read full line;
-        if (buffer == "\n" || buffer == "") 
-            break;
+        while (true)
+        {
+            std::string buffer;
+            client.readMessage(buffer);
+            buffer.push_back('\n');
 
-        singleMessageMode(client, buffer);
-    }
+            std::cout << buffer << std::endl;
+        }
+    }).detach();
+
+    std::thread ([&]()
+    {
+        while (true)
+        {
+            buffer.clear();
+            printf("Waiting for your message: ");
+            std::getline(std::cin, buffer);     // read full line;
+            if (buffer == "\n" || buffer == "") 
+                return;
+
+            client.sendMessage(buffer);
+            //singleMessageMode(client, buffer);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    }).join();
 }
