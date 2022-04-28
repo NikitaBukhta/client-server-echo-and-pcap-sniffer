@@ -68,19 +68,16 @@ void interactiveMode(Client& client)
         }
     }).detach();
 
-    std::thread ([&]()
+    while (true)
     {
-        while (true)
-        {
-            buffer.clear();
-            printf("Waiting for your message: ");
-            std::getline(std::cin, buffer);     // read full line;
-            if (buffer == "\n" || buffer == "") 
-                return;
+        buffer.clear();
+        printf("Waiting for your message: ");
+        std::getline(std::cin, buffer);     // read full line;
+        if (buffer == "\n" || buffer == "") 
+            return;
 
-            client.sendMessage(buffer);
-            //singleMessageMode(client, buffer);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-    }).join();
+        client.sendMessage(buffer);
+        //singleMessageMode(client, buffer);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 }
