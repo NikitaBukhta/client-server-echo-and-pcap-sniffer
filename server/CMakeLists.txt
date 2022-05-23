@@ -13,7 +13,7 @@ add_executable(
     server-app.cpp    
 )
 
-#----------------------------------- ADD LIBRARY -----------------------------------#
+#------------------------- ADD LIBRARY FOR THE SERVER CLASS ------------------------#
 
 # name of lib we create;
 set(
@@ -52,13 +52,14 @@ target_link_libraries(
     ${INCLUDED_LIBS}
 )
 
-#----------------------------------- INCLUDE LIBRAREIS -----------------------------------#
+#------------------------- INCLUDE LIBRARIES FOR EXECUTABLE FILE ------------------------#
 
 # there contain all libs that needed for executable file
+
 set(
     ALL_LIBS
     ${LIB_NAME}
-    ${INCLUDED_LIBS}
+    sniffer_lib
 )
 
 # all this libs;

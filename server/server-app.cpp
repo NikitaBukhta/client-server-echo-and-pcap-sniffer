@@ -1,12 +1,10 @@
 #include "server.h"
-#include "posix_wrapping.h"
+#include "sniffer.h"
 
-#include <stdexcept>        // default exceptions;
-#include <unistd.h>         // STDOUT_FILENO;
-#include <string>
-#include <iostream>         // cout, endl;
 #include <thread>
 #include <chrono>
+
+#define DEVICE "en0"
 
 #define PREFIX "Server echo: "
 
@@ -36,8 +34,25 @@ void makeDisconnect(int client, Server& server);
  */
 void clientCommunication(int clientSocket, Server& server);
 
+/*Desctiption:
+ * Start sniffing in while loop
+ *
+ * ARGS:
+ * sniffer - object of class Sniffer that has specific device and
+ *      some filters mb;
+ */
+void startSniffing(PCAP::Sniffer& sniffer);
+
 int main(int argc, char **argv)
 {
+    using namespace PCAP;
+
+    Sniffer snifferTCP(DEVICE, "tcp");
+    Sniffer snifferUDP(DEVICE, "udp");
+
+    std::thread(startSniffing, std::ref(snifferTCP)).detach();
+    std::thread(startSniffing, std::ref(snifferUDP)).detach();
+
     if (argc < 2)
         throw std::invalid_argument("You must pass the port number when starting "
             "the server!");
@@ -116,5 +131,14 @@ void clientCommunication(int clientSocket, Server& server)
         }
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
+
+void startSniffing(PCAP::Sniffer& sniffer)
+{
+    while(true)
+    {
+        sniffer.sniff();
+        std::cout << std::endl;
     }
 }
