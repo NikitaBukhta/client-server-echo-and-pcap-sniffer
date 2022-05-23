@@ -48,9 +48,9 @@ namespace server
          * to new client with infomation about server overflow.
          * 
          * Return values:
-         * return true if connection was made;
+         * return number of clientSocket. If something is wrong, return 0;
          */
-        bool acceptClientConnection(void);
+        int acceptClientConnection(void);
 
         /* Description: 
          * Return client IP address in dotted-decimal notation. The string is 
@@ -64,7 +64,7 @@ namespace server
          * If no errors happened, returns client IP-address.
          * Otherwise nullptr;
          */
-        char* getClientIP(int clientSocket);
+        char* getClientIP(int clientSocket) const;
 
         /* Description:
          * Read message that client sent to the server. Max message length 
@@ -81,7 +81,7 @@ namespace server
          * return values:
          * return size of readen message;
          */
-        ssize_t readMessage(std::string& buffer, int clientSocket);
+        ssize_t readMessage(std::string& buffer, int clientSocket) const;
 
         /* Description:
          * Write all clients' sockets to the vector;
@@ -89,9 +89,9 @@ namespace server
          * ARGS:
          * clientSockets - array, which contains clients' sockets;
          */
-        void getClientSockets(std::vector<int>& clientSockets);
+        void getClientSockets(std::vector<int>& clientSockets) const;
 
-        void getClientSockets(std::map<int, unsigned short>& clientSockets);
+        void getClientSockets(std::map<int, unsigned short>& clientSockets) const;
 
         /* Description:
          * Send message to the specific client by a socket;
@@ -103,7 +103,7 @@ namespace server
          * clientSocket - socket of the client you want to 
          *      send the message;
          */
-        void sendMessage(const std::string& msg, int clientSocket);
+        void sendMessage(const std::string& msg, int clientSocket) const;
 
         /* Description:
          * Send message to the all clients by a socket;
@@ -115,10 +115,10 @@ namespace server
          * ARGS:
          * msg - message you want to send to the client;
          */
-        void sendMessage(const std::string& msg);
+        void sendMessage(const std::string& msg) const;
 
         // return server socket;
-        int getServerSocket(void);
+        int getServerSocket(void) const;
 
         /* Desctiption:
          * Disconect the client from the server. Recomend to rewrite or

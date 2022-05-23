@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <fcntl.h>
 
 namespace POSIX
 {
@@ -304,6 +305,20 @@ namespace POSIX
      * Otherwise throw PosixError with information about error;
      */
     ssize_t _send(int socket, const void *buffer, size_t length, int flags);
+
+    /* fcntl wrapping
+     *
+     * Description:
+     * fcntl() provides for control over descriptors;
+     * 
+     * ARGS:
+     * The argument fildes is a descriptor to be operated on by cmd;
+     * 
+     * Return values
+     * Upon successful completion, the value returned depends on cmd.
+     * Otherwise throw the exception;
+     */
+    int _fcntl(int fildes, int cmd, ...);
 };
 
 #endif // !POSIX_WRAPPING_H

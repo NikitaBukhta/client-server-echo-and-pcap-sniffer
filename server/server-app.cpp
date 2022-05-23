@@ -5,10 +5,15 @@
 #include <unistd.h>         // STDOUT_FILENO;
 #include <string>
 #include <iostream>         // cout, endl;
+#include <thread>
+#include <chrono>
 
 #define PREFIX "Server echo: "
 
 using namespace server;
+
+// count of connections;
+static int connectionCount = 0;
 
 /* Description:
  * Desconnect the client from the server and rewrite content from
@@ -17,9 +22,19 @@ using namespace server;
  * ARGS:
  * client - client socket;
  * server - server where we remove the client;
- * clientList - vector with client sockets;
  */
-void makeDisconnect(int client, Server& server, std::map<int, unsigned short>& clientList);
+void makeDisconnect(int client, Server& server);
+
+/* Desctiption:
+ * With function contains interaction between client and server;
+ *
+ * ARGS:
+ * clientSocket - socket of clients with which server interacts;
+ * server - our server to which clients connected;
+ * clientVector - list of clients that connected to the server. 
+ *      That is needed for disconnecting the clients;
+ */
+void clientCommunication(int clientSocket, Server& server);
 
 int main(int argc, char **argv)
 {
@@ -29,70 +44,77 @@ int main(int argc, char **argv)
 
     int port = atoi(argv[1]);
 
-    Server server(port, 10);
-    // key - clientSocket, value - count of iteration;
-    std::map<int, unsigned short> clients;
+    static Server server(port, 2);
+
     bool connectionMade = false;    /* this var is need in order to 
                                      * do not close the server, if
                                      * any connections have't made
                                      * earlier;
                                      */
-    std::string msg;
-
-    fd_set read_fds;                // read fields for check an client performance;
-    struct timeval timeout = {0};   // checking interval;
     
-    // every iteration n, we make disconnect all passive connections;
-    unsigned short iterationForCheck = 20;
+    int newClient = 0;
 
     while (true)
     {  
 
-        if(server.acceptClientConnection())
+        if((newClient = server.acceptClientConnection()) != 0)
         {
             connectionMade = true;
-            server.getClientSockets(clients);
+            ++connectionCount;
+            // new thread for a new server;
+            std::thread clientThread(clientCommunication, newClient, std::ref(server));
+            clientThread.detach();
         }
 
-        // check every client
-        for (unsigned short i = 0; i < clients.size(); ++i)
+        /* if one more connection was made and now there are no connection,
+         * just end the loop and turn off the server;
+         */
+        if (connectionMade && (connectionCount == 0))
         {
-            auto client = clients.begin();
-            std::advance(client, i);
-
-            ++(client->second);
-
-            // if nothing is read, return 0;
-            if (server.readMessage(msg, client->first))
-            {
-                std::cout << "Message from socket " << client->first << " (" 
-                    << server.getClientIP(client->first) << " ): " << msg << std::endl;
-                
-                msg = PREFIX + msg + '\0';
-                server.sendMessage(msg, client->first);
-
-                // if we have got the message, reset the number of iterations to zero;
-                client->second = 0;
-            }
-            else if (client->second >= iterationForCheck)
-            {
-                makeDisconnect(client->first, server, clients);
-                --i;
-            }
-            sleep(1);
+            std::cout << "Finish work!" << std::endl;
+            break;
         }
-
-        // if some connections have been made and the server is empty now;
-        if ((clients.size() == 0) && connectionMade) break;
     }
 
     return 0;
 }
 
-void makeDisconnect(int client, server::Server& server, std::map<int, unsigned short>& clientList)
+void makeDisconnect(int client, Server& server)
 {
-    std::cout << "Disconnect socket " << client << " (" << server.getClientIP(client) << " ): " << std::endl;
+    std::cout << "Disconnect socket " << client << " (" << server.getClientIP(client) << ")" << std::endl;
+    --connectionCount;
 
     server.disconnectClient(client);
-    clientList.erase(client);
+}
+
+void clientCommunication(int clientSocket, Server& server)
+{
+    static unsigned short iterationForCheck = 20;
+    unsigned short currentIteration = 0;
+    std::string msg;
+
+    // if nothing is read, return 0;
+    while (true)
+    {
+        ++currentIteration;
+
+        if (server.readMessage(msg, clientSocket))
+        {
+            std::cout << "Message from socket " << clientSocket << " (" 
+                << server.getClientIP(clientSocket) << "): " << msg << std::endl;
+            
+            msg = PREFIX + msg + '\0';
+            server.sendMessage(msg, clientSocket);
+
+            // if we have got the message, reset the number of iterations to zero;
+            currentIteration = 0;
+        }
+        else if (currentIteration >= iterationForCheck)
+        {
+            makeDisconnect(clientSocket, server);
+            return;
+        }
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 }

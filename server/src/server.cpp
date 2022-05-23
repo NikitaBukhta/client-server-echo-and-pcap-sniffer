@@ -5,7 +5,8 @@
 #include <unistd.h>         // close();
 #include <iostream>         // std::cerr
 #include <netinet/tcp.h>    // TCP_KEEPINTVL
-#include <fcntl.h>          // temp
+#include <thread>
+#include <chrono>
 
 using namespace server;
 
@@ -25,10 +26,8 @@ Server::Server(int port) : Server(port, 1)
 Server::~Server(void)
 {
     // close all clients;
-    for (auto client : clients)
-    {
-        close(client.first);
-    }
+    while(clients.size() != 0)
+        disconnectClient(clients.begin()->first);
     
     // close server;
     close(serverSocket);
@@ -39,7 +38,7 @@ int Server::makeServerSocket(void)
     try
     {
         serverSocket = POSIX::_socket(address.sin_family, SOCK_STREAM, IPPROTO_TCP);
-        fcntl(serverSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
+        POSIX::_fcntl(serverSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
         POSIX::_bind(serverSocket, (struct sockaddr*)(&address), sizeof(address));
         POSIX::_listen(serverSocket, maxClientsCount);
     }
@@ -53,7 +52,7 @@ int Server::makeServerSocket(void)
     return EXIT_SUCCESS;
 }
 
-bool Server::acceptClientConnection(void)
+int Server::acceptClientConnection(void)
 {
     sockaddr_in clientAddress = {0};
     clientAddress.sin_family = address.sin_family;
@@ -66,32 +65,18 @@ bool Server::acceptClientConnection(void)
         clientSocket = POSIX::_accept(serverSocket, (sockaddr*)(&clientAddress), 
             &clientAddressLength);
         
-        // if server is full, throw the error;
-        if (maxClientsCount <= clients.size())
+        // if server is full, waiting for connection;
+        while (maxClientsCount <= clients.size())
         {
-            char errorMessage[] = "Server is full. Try to connect letter!\n";
-            throw cs::ConnectionError(errorMessage);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
-        fcntl(clientSocket, F_SETFL, O_NONBLOCK); // set non blocking on the functions;
         clients.emplace(clientSocket, clientAddress);
         sendMessage("Connected\n", clientSocket);
     }
     catch(const POSIX::PosixError& e)
     {
-        //std::cerr << e.what() << std::endl;
-
-        return false;
-    }
-    catch(const cs::ConnectionError& e )
-    {
-        // send the error message and close connection with the client;
-        std::string errorMessage = e.what();
-        sendMessage(errorMessage, clientSocket);
-        //write(clientSocket, errorMessage, strlen(errorMessage));
-        close(clientSocket);
-
-        return false;
+        return 0;
     }
     
     char info[64];
@@ -99,10 +84,10 @@ bool Server::acceptClientConnection(void)
     POSIX::_write(STDOUT_FILENO, info, strlen(info));
     enableKeepalive(clientSocket, 10);
 
-    return true;
+    return clientSocket;
 }
 
-char* Server::getClientIP(int clientSocket)
+char* Server::getClientIP(int clientSocket) const
 {
     auto client = clients.find(clientSocket);  
     
@@ -117,7 +102,7 @@ char* Server::getClientIP(int clientSocket)
     }
 }
 
-ssize_t Server::readMessage(std::string &buffer, int clientSocket)
+ssize_t Server::readMessage(std::string &buffer, int clientSocket) const
 {    
     buffer.clear();        // clear buffer from old information;
 
@@ -142,7 +127,7 @@ ssize_t Server::readMessage(std::string &buffer, int clientSocket)
     return nread;
 }
 
-void Server::getClientSockets(std::vector<int>& clientSockets)
+void Server::getClientSockets(std::vector<int>& clientSockets) const
 {
     for (auto& client : clients)
     {
@@ -150,7 +135,7 @@ void Server::getClientSockets(std::vector<int>& clientSockets)
     }
 }
 
-void Server::getClientSockets(std::map<int, unsigned short>& clientSockets)
+void Server::getClientSockets(std::map<int, unsigned short>& clientSockets) const
 {
     for (auto& client : clients)
     {
@@ -162,7 +147,7 @@ void Server::getClientSockets(std::map<int, unsigned short>& clientSockets)
     }
 }
 
-void Server::sendMessage(const std::string& msg, int clientSocket)
+void Server::sendMessage(const std::string& msg, int clientSocket) const
 {
     try
     {
@@ -174,7 +159,7 @@ void Server::sendMessage(const std::string& msg, int clientSocket)
     }
 }
 
-void Server::sendMessage(const std::string& msg)
+void Server::sendMessage(const std::string& msg) const
 {
     for (auto client : clients)
     {
@@ -206,7 +191,7 @@ void Server::enableKeepalive(int clientSocket, int interval)
     }
 }
 
-int Server::getServerSocket(void)
+int Server::getServerSocket(void) const
 {
     return serverSocket;
 }
@@ -214,6 +199,12 @@ int Server::getServerSocket(void)
 void Server::disconnectClient(int clientSocket)
 {
     sendMessage("You was disconnected from the server!", clientSocket);
-    clients.erase(clientSocket);     // remove client from list.
-    close(clientSocket);             // close connection;
+
+    auto clientIT = clients.find(clientSocket);
+    if (clientIT != clients.end())
+    {
+        clients.erase(clientIT);    // remove client from list.
+        close(clientSocket);        // close connection;
+
+    }
 }

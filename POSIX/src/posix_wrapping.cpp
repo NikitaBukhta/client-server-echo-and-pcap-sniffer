@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <errno.h>
 #include <string>
-#include <unistd.h>     
+#include <unistd.h> 
 
 int POSIX::_socket(int domain, int type, int protocol)
 {
@@ -193,5 +193,24 @@ ssize_t POSIX::_send(int socket, const void *buffer, size_t length, int flags)
         throw PosixError(error.c_str());
     }
     
+    return ret;
+}
+
+int POSIX::_fcntl(int fildes, int cmd, ...)
+{
+    va_list valist;
+
+    int ret = fcntl(fildes, cmd, valist);
+
+    if (ret == -1)
+    {
+        std::string error("send error: ");
+        error += strerror(errno);
+        
+        throw PosixError(error.c_str());
+    }
+
+    va_end(valist);
+
     return ret;
 }

@@ -31,7 +31,7 @@ namespace client    // client-server
          * return values:
          * return size of readen message;
          */
-        ssize_t readMessage(std::string& buffer);
+        ssize_t readMessage(std::string& buffer) const;
 
         /* Description:
          * Send message to the server by a socket;
@@ -41,7 +41,7 @@ namespace client    // client-server
          * ARGS:
          * message - message you want to send to the client;
          */
-        void sendMessage(const std::string& msg);
+        void sendMessage(const std::string& msg) const;
 
         /* Description:
          * Enable keep alive checking connection between client and server;

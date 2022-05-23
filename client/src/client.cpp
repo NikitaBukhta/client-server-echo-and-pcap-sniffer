@@ -35,7 +35,7 @@ Client::~Client(void)
     close(serverSocket);
 }
 
-ssize_t Client::readMessage(std::string& buffer)
+ssize_t Client::readMessage(std::string& buffer) const
 {
     buffer.clear();         // clear buffer from old information;
 
@@ -60,7 +60,7 @@ ssize_t Client::readMessage(std::string& buffer)
     return nread;
 }
 
-void Client::sendMessage(const std::string& msg)
+void Client::sendMessage(const std::string& msg) const
 {
     auto a = msg.c_str();
     auto count = msg.size() * sizeof(char);
